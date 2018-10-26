@@ -1,0 +1,68 @@
+@import '~carbon-components/scss/globals/scss/styles';
+
+.container {
+  margin: 40px;
+
+  .tabs {
+    .bx--tabs-trigger{
+      padding: 0;
+    }
+
+    .bx--tabs__nav {
+      margin: 0;
+    }
+  }
+
+  .input-container {
+    margin-top: 1.5rem;
+
+    .input-field {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .execute-button {
+    margin-bottom: 3rem;
+  }
+
+  .response {
+    display: none;
+
+    .bx--label {
+      margin-bottom: 1rem;
+    }
+
+    .bx--snippet--multi {
+      max-width: 100%;
+    }
+
+    &.has-message {
+      display: block;
+    }
+  }
+
+  .explain {
+    padding-top: 1rem;
+    display: none;
+
+    .bx--label {
+      display: none;
+    }
+
+    .bx--text-area {
+      padding: 0 1rem;
+    }
+
+    &.has-message {
+      display: block;
+    }
+  }
+
+  .error-notification {
+    display: none;
+
+    &.has-message {
+      display: flex;
+    }
+  }
+}

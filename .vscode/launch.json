@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "npm start:dev",
+      "program": "${workspaceFolder}/src/server/server.ts",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "preLaunchTask": "build:dev",
+      "console": "integratedTerminal",
+      "env": {
+        "DOMINO_HOST": "",
+        "DOMINO_DB_FILE_PATH": "",
+        "DOMINO_PROTON_PORT": "",
+        "LOGGER_LEVEL": "debug",
+        "LOGGER_PRETTY": "true"
+      },
+    }
+  ]
+}
