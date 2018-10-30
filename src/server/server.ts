@@ -1,6 +1,6 @@
 import loopback from 'loopback';
 import boot from 'loopback-boot';
-import logger from './utils/logger';
+import logger from '../common/utils/logger';
 
 const app = loopback();
 

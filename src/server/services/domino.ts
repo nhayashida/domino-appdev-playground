@@ -1,5 +1,10 @@
 import { useServer } from '@domino/domino-db';
-import logger from '../utils/logger';
+import logger from '../../common/utils/logger';
+
+export interface DqlResponse {
+  bulkResponse: object;
+  explain: string;
+}
 
 class Domino {
   private serverConfig;
@@ -23,25 +28,25 @@ class Domino {
    *
    * @param db
    * @param method
-   * @param options
+   * @param query
    * @returns response
    */
-  private async executeApi(db: any, method: string, options: object): Promise<object> {
-    const explain = await db.explainQuery(options);
+  private async executeApi(db: any, method: string, query: object): Promise<DqlResponse> {
+    const explain = await db.explainQuery(query);
 
     let bulkResponse;
-    switch (method) {
-      case 'bulkReadDocuments':
-        bulkResponse = await db.bulkReadDocuments(options);
+    switch (method.toLowerCase()) {
+      case 'bulkreaddocuments':
+        bulkResponse = await db.bulkReadDocuments(query);
         break;
-      case 'bulkDeleteDocuments':
-        bulkResponse = await db.bulkDeleteDocuments(options);
+      case 'bulkdeletedocuments':
+        bulkResponse = await db.bulkDeleteDocuments(query);
         break;
-      case 'bulkReplaceItems':
-        bulkResponse = await db.bulkReplaceItems(options);
+      case 'bulkreplaceitems':
+        bulkResponse = await db.bulkReplaceItems(query);
         break;
-      case 'bulkDeleteItems':
-        bulkResponse = await db.bulkDeleteItems(options);
+      case 'bulkdeleteitems':
+        bulkResponse = await db.bulkDeleteItems(query);
         break;
       default:
         throw new Error('Unknown method');
@@ -54,16 +59,16 @@ class Domino {
    * Execute Domino Query Language
    *
    * @param method
-   * @param options
+   * @param query
    * @returns response
    */
-  async query(method: string, options: object) {
-    logger.debug(Object.assign({ method }, options));
+  async query(method: string, query: object): Promise<DqlResponse> {
+    logger.debug(Object.assign({ method }, query));
 
     try {
       const server = await useServer(this.serverConfig);
       const db = await server.useDatabase(this.dbConfig);
-      const res = await this.executeApi(db, method, options);
+      const res = await this.executeApi(db, method, query);
       return res;
     } catch (err) {
       throw err;

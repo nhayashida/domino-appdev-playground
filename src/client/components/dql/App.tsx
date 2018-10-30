@@ -9,6 +9,7 @@ import {
 } from 'carbon-components-react';
 import classnames from 'classnames';
 import React, { PureComponent } from 'react';
+import { DQL_PROPERTIES } from '../../../common/utils/constants';
 
 interface State {
   selectedTab: number;
@@ -43,14 +44,14 @@ class App extends PureComponent<{}, State> {
     const inputNodes = containerNode && containerNode.querySelectorAll('input');
 
     const method = containerNode.getAttribute('data-method');
-    const options = (inputNodes ? [...inputNodes] : []).reduce((accumulator, node) => {
-      const key = node.getAttribute('data-key') || '';
-      const type = node.getAttribute('data-type') || '';
+    const options = (inputNodes ? [...inputNodes] : []).reduce((acc, curr) => {
+      const name = curr.getAttribute('data-key') || '';
+      const type = curr.getAttribute('data-type') || '';
       const value =
-        node.value && (type === 'object' || type === 'array') ? JSON.parse(node.value) : node.value;
-      return Object.assign(accumulator, { [key]: value });
+        curr.value && (type === 'object' || type === 'array') ? JSON.parse(curr.value) : curr.value;
+      return Object.assign(acc, { [name]: value });
     }, {});
-    const res = await fetch(`/dql?method=${method}`, {
+    const res = await fetch(`/proton/dql?method=${method}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -81,73 +82,17 @@ class App extends PureComponent<{}, State> {
   }
 
   generateTabs(): JSX.Element[] {
-    const inputProps = [
-      {
-        method: 'bulkReadDocuments',
-        options: [
-          {
-            key: 'query',
-            type: 'string',
-            placeholder: "Form = 'Contact' and LastName = 'Parsons'",
-          },
-          {
-            key: 'itemNames',
-            type: 'array',
-            placeholder: '["FirstName", "LastName"]',
-          },
-        ],
-      },
-      {
-        method: 'bulkDeleteDocuments',
-        options: [
-          {
-            key: 'query',
-            type: 'string',
-            placeholder: "Form = 'Contact' and LastName = 'Parsons'",
-          },
-        ],
-      },
-      {
-        method: 'bulkReplaceItems',
-        options: [
-          {
-            key: 'query',
-            type: 'string',
-            placeholder: "Form = 'Contact' and LastName = 'Parsons'",
-          },
-          {
-            key: 'replaceItems',
-            type: 'object',
-            placeholder: '{ "City": "Chelmsford", "State": "MA" }',
-          },
-        ],
-      },
-      {
-        method: 'bulkDeleteItems',
-        options: [
-          {
-            key: 'query',
-            type: 'string',
-            placeholder: "Form = 'Contact' and LastName = 'Parsons'",
-          },
-          {
-            key: 'itemNames',
-            type: 'object',
-            placeholder: '["EMail", "Phone"]',
-          },
-        ],
-      },
-    ];
-    return inputProps.map((props, tabIdx) => {
-      const inputFields = props.options.map((option, optionIdx) => {
+    return DQL_PROPERTIES.map((props, tabIdx) => {
+      const inputFields = Object.keys(props.options).map((key, optionIdx) => {
+        const option = props.options[key];
         return (
           <TextInput
             key={optionIdx}
-            id={`${props.method}-${option.key}`}
+            id={`${props.method}-${key}`}
             className="input-field"
-            labelText={option.key}
+            labelText={key}
             placeholder={option.placeholder}
-            data-key={option.key}
+            data-key={key}
             data-type={option.type}
           />
         );

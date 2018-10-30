@@ -53,7 +53,7 @@ proton-dql-playground:latest
 3. Select **Debug** -> **Start Debugging**
 
 ## Play with app
-1. Open http://localhost:3000/dql
+1. Open http://localhost:3000/proton/dql
 1. Input a query for reading documents (e.g. `Form = 'Contact' and LastName = 'Parsons'`)
 1. Click **execute**
 

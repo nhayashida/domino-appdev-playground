@@ -4,7 +4,7 @@ import { renderToNodeStream } from 'react-dom/server';
 import App from '../../client/components/dql/App';
 import Html from '../../client/components/dql/Html';
 import domino from '../services/domino';
-import logger from '../utils/logger';
+import logger from '../../common/utils/logger';
 
 /**
  * Execute Domino Query Language
