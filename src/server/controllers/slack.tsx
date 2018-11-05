@@ -1,10 +1,32 @@
+import crypto from 'crypto';
 import { Request, Response } from 'express';
+import moment from 'moment';
 import rp from 'request-promise';
+import timingSafeCompare from 'tsscmp';
 import domino from '../services/domino';
 import { DQL_PROPERTIES } from '../../common/utils/constants';
 import logger from '../../common/utils/logger';
 
 const SLACK_API_ENDPOINT = 'https://slack.com/api';
+
+const verify = req => {
+  const signature = req.headers['x-slack-signature'];
+  const timestamp = req.headers['x-slack-request-timestamp'];
+
+  // Throw an error if timestamp is too old
+  if (moment().diff(parseInt(timestamp, 10) * 1000) > 60 * 5 * 1000) {
+    throw new Error('Too old request timestamp');
+  }
+
+  const [version, hash] = signature.split('=');
+  const digest = crypto
+    .createHmac('sha256', process.env.SLACK_SIGNING_SECRET || '')
+    .update(`${version}:${timestamp}:${req.rawBody}`)
+    .digest('hex');
+  if (!timingSafeCompare(digest, hash)) {
+    throw new Error('Invalid request signature');
+  }
+};
 
 /**
  * Called when a slash command is executed
@@ -15,9 +37,11 @@ const SLACK_API_ENDPOINT = 'https://slack.com/api';
 const command = async (req: Request, res: Response) => {
   logger.debug(req.body);
 
-  const { command, text, trigger_id } = req.body;
-
   try {
+    verify(req);
+
+    const { command, text, trigger_id } = req.body;
+
     const method = command.slice(1, command.length); // Remove slash
     const props = DQL_PROPERTIES.find(o => o.method.toLowerCase() === method);
     if (!props) {
@@ -69,9 +93,9 @@ const submission = async (
 ) => {
   logger.debug(payload);
 
-  const { callback_id, submission } = payload;
-
   try {
+    const { callback_id, submission } = payload;
+
     const method = callback_id;
     const props = DQL_PROPERTIES.find(o => o.method.toLowerCase() === callback_id);
     if (!props) {
