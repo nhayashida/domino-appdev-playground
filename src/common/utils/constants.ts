@@ -4,11 +4,11 @@ export const DQL_PROPERTIES = [
     options: {
       query: {
         type: 'string',
-        placeholder: "Form = 'Contact' and LastName = 'Parsons'",
+        placeholder: "LastName = 'Parsons'",
       },
       itemNames: {
         type: 'array',
-        placeholder: '["FirstName", "LastName"]',
+        placeholder: '["Id", "City", "State"]',
         optional: true,
       },
     },
@@ -18,7 +18,7 @@ export const DQL_PROPERTIES = [
     options: {
       query: {
         type: 'string',
-        placeholder: "Form = 'Contact' and LastName = 'Parsons'",
+        placeholder: "LastName = 'Parsons'",
       },
     },
   },
@@ -27,7 +27,7 @@ export const DQL_PROPERTIES = [
     options: {
       query: {
         type: 'string',
-        placeholder: "Form = 'Contact' and LastName = 'Parsons'",
+        placeholder: "LastName = 'Parsons'",
       },
       replaceItems: {
         type: 'object',
@@ -40,7 +40,7 @@ export const DQL_PROPERTIES = [
     options: {
       query: {
         type: 'string',
-        placeholder: "Form = 'Contact' and LastName = 'Parsons'",
+        placeholder: "LastName = 'Parsons'",
       },
       itemNames: {
         type: 'object',

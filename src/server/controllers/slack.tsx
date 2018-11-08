@@ -97,7 +97,7 @@ const submission = async (
     const { callback_id, submission } = payload;
 
     const method = callback_id;
-    const props = DQL_PROPERTIES.find(o => o.method.toLowerCase() === callback_id);
+    const props = DQL_PROPERTIES.find(o => o.method.toLowerCase() === method);
     if (!props) {
       throw new Error('No properties found');
     }
