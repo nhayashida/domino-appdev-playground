@@ -4,22 +4,17 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "npm start:dev",
+      "name": "npm start",
       "program": "${workspaceFolder}/src/server/server.ts",
+      "runtimeArgs": [
+        "-r", "dotenv/config",
+        "-r", "ts-node/register"
+      ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],
       "preLaunchTask": "build:dev",
       "console": "integratedTerminal",
-      "env": {
-        "DOMINO_HOST": "",
-        "DOMINO_DB_FILE_PATH": "",
-        "DOMINO_PROTON_PORT": "",
-        "SLACK_SIGNING_SECRET": "",
-        "SLACK_ACCESS_TOKEN": "",
-        "LOGGER_LEVEL": "debug",
-        "LOGGER_PRETTY": "true"
-      },
     }
   ]
 }
