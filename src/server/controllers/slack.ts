@@ -89,7 +89,7 @@ const command = async (req: Request, res: Response) => {
  */
 const submission = async (
   payload: { callback_id: string; submission: { query: string } },
-  respond: (object) => void,
+  respond: (message: { text: string }) => void,
 ) => {
   logger.debug(payload);
 

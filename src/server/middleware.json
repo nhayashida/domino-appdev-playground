@@ -44,7 +44,7 @@
   },
   "files": {
     "loopback#static": [{
-      "paths": ["/"],
+      "paths": ["/proton"],
       "params": "$!../../dist"
     }]
   },
