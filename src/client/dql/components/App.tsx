@@ -8,69 +8,29 @@ import {
   InlineNotification,
 } from 'carbon-components-react';
 import classnames from 'classnames';
+import { isEmpty } from 'lodash';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import actions from '../actions/actions';
 import { DQL_PROPERTIES } from '../../../common/utils/constants';
 
-interface State {
-  selectedTab: number;
-  response: string;
-  explain: string;
-  notification: string;
+interface Props {
+  dqlResponse: object;
+  dqlExplain: string;
+  errorMessage: string;
+  executeDql: (method: string, options: object) => void;
 }
 
-class App extends PureComponent<{}, State> {
-  private tabContents: JSX.Element[] = [];
+const mapStateToProps = (state: Props) => ({
+  dqlResponse: state.dqlResponse,
+  dqlExplain: state.dqlExplain,
+  errorMessage: state.errorMessage,
+});
 
-  constructor(props) {
-    super(props);
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
 
-    this.state = {
-      selectedTab: 0,
-      response: '',
-      explain: '',
-      notification: '',
-    };
-
-    this.onExecuteClick = this.onExecuteClick.bind(this);
-  }
-
-  onTabClick(index) {
-    this.setState({ selectedTab: index });
-  }
-
-  async onExecuteClick() {
-    const tabContent = this.tabContents[this.state.selectedTab];
-    const containerNode: Element = (tabContent as any).ref.current;
-    const inputNodes = containerNode && containerNode.querySelectorAll('input');
-
-    const method = containerNode.getAttribute('data-method');
-    const options = (inputNodes ? [...inputNodes] : []).reduce((acc, curr) => {
-      const name = curr.getAttribute('data-key') || '';
-      const type = curr.getAttribute('data-type') || '';
-      const value =
-        curr.value && (type === 'object' || type === 'array') ? JSON.parse(curr.value) : curr.value;
-      return Object.assign(acc, { [name]: value });
-    }, {});
-    const res = await fetch(`/proton/dql?method=${method}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify(Object.assign(options)),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      this.setState({ response: '', explain: '', notification: data.message });
-    } else {
-      this.setState({
-        response: JSON.stringify(data.bulkResponse, null, '  '),
-        explain: data.explain.trim(),
-        notification: '',
-      });
-    }
-  }
-
+class App extends PureComponent<Props> {
   onResponseCopy() {
     const selection = window.getSelection();
     if (selection) {
@@ -97,59 +57,85 @@ class App extends PureComponent<{}, State> {
           />
         );
       });
-      this.tabContents[tabIdx] = (
-        <div
-          className="input-container"
-          ref={React.createRef<HTMLDivElement>()}
-          data-method={props.method}
-        >
-          {inputFields}
-        </div>
-      );
+
+      const onExecuteClick = () => {
+        const options = inputFields
+          .map(inputField => {
+            const { props } = inputField;
+            const elem: any = document.getElementById(props.id);
+            if (elem) {
+              const key = props['data-key'];
+              let value = elem.value;
+              try {
+                const type = props['data-type'];
+                if (value && (type === 'object' || type === 'array')) {
+                  value = JSON.parse(elem.value);
+                }
+              } catch (err) {
+                // do nothing
+              }
+              return { [key]: value };
+            }
+            return {};
+          })
+          .reduce((acc, curr) => Object.assign(acc, curr));
+
+        this.props.executeDql(props.method, options);
+      };
+
       return (
-        <Tab key={tabIdx} label={props.method} onClick={this.onTabClick.bind(this, tabIdx)}>
-          {this.tabContents[tabIdx]}
+        <Tab key={tabIdx} label={props.method}>
+          <div className="input-container">{inputFields}</div>
+          <Button className="execute-button" onClick={onExecuteClick}>
+            execute
+          </Button>
         </Tab>
       );
     });
   }
 
   render(): JSX.Element {
-    const responseClasses = classnames('response', {
-      'has-message': this.state.response,
+    const { dqlResponse, dqlExplain, errorMessage } = this.props;
+
+    const response = !isEmpty(dqlResponse)
+      ? JSON.stringify(this.props.dqlResponse, null, '  ')
+      : '';
+    const explain = dqlExplain ? dqlExplain.trim() : '';
+
+    const resultClasses = classnames('result', {
+      'has-result': response || explain,
     });
-    const explainClasses = classnames('explain', {
-      'has-message': this.state.explain,
-    });
-    const notificationClasses = classnames('error-notification', {
-      'has-message': this.state.notification,
+    const notificationClasses = classnames('error', {
+      'has-message': errorMessage,
     });
 
     return (
       <div className="container">
         <Tabs className="tabs">{this.generateTabs()}</Tabs>
-        <Button className="execute-button" onClick={this.onExecuteClick}>
-          execute
-        </Button>
-        <div className={responseClasses}>
-          <label className="bx--label">bulkResponse</label>
-          <CodeSnippet type="multi" onClick={this.onResponseCopy}>
-            {this.state.response}
-          </CodeSnippet>
-        </div>
-        <div className={explainClasses}>
-          <TextArea labelText="" rows={11} value={this.state.explain} />
+        <div className={resultClasses}>
+          <div className="response">
+            <label className="bx--label">bulkResponse</label>
+            <CodeSnippet type="multi" onClick={this.onResponseCopy}>
+              {response}
+            </CodeSnippet>
+          </div>
+          <div className="explain">
+            <TextArea labelText="" rows={11} value={explain} />
+          </div>
         </div>
         <InlineNotification
           className={notificationClasses}
           hideCloseButton={true}
           kind="error"
           title="Error"
-          subtitle={this.state.notification}
+          subtitle={errorMessage}
         />
       </div>
     );
   }
 }
 
-export default App;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

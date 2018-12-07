@@ -25,40 +25,37 @@
     margin-bottom: 3rem;
   }
 
-  .response {
+  .result {
     display: none;
 
-    .bx--label {
-      margin-bottom: 1rem;
-    }
-
-    .bx--snippet--multi {
-      max-width: 100%;
-    }
-
-    &.has-message {
+    &.has-result {
       display: block;
     }
+
+    .response {
+      .bx--label {
+        margin-bottom: 1rem;
+      }
+  
+      .bx--snippet--multi {
+        max-width: 100%;
+      }  
+    }
+  
+    .explain {
+      padding-top: 1rem;
+  
+      .bx--label {
+        display: none;
+      }
+  
+      .bx--text-area {
+        padding: 0 1rem;
+      }  
+    }  
   }
 
-  .explain {
-    padding-top: 1rem;
-    display: none;
-
-    .bx--label {
-      display: none;
-    }
-
-    .bx--text-area {
-      padding: 0 1rem;
-    }
-
-    &.has-message {
-      display: block;
-    }
-  }
-
-  .error-notification {
+  .error {
     display: none;
 
     &.has-message {

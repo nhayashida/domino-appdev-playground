@@ -1,4 +1,3 @@
-import autoprefixer from 'autoprefixer';
 import path from 'path';
 import { Configuration } from 'webpack';
 import HTMLWebpackPlugin from 'html-webpack-plugin';
@@ -10,7 +9,7 @@ const common: Configuration = {
   output: {
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js',
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist/dql'),
   },
   optimization: {
     runtimeChunk: true,
@@ -44,16 +43,6 @@ const common: Configuration = {
             },
           },
           {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [
-                autoprefixer({
-                  browsers: ['last 1 version', 'ie >= 11'],
-                }),
-              ],
-            },
-          },
-          {
             loader: 'sass-loader',
             options: {
               includePaths: [path.resolve(__dirname, '..', 'node_modules')],
@@ -65,7 +54,7 @@ const common: Configuration = {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      filename: 'dql/index.html',
+      filename: 'index.html',
       template: './src/client/dql/index.html',
       meta: {
         viewport: 'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no',

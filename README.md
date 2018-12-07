@@ -44,3 +44,5 @@ docker run -it -p 3000:3000 proton-dql-playground:latest
 1. Click **execute**
 
 Then, matched documents will be listed in JSON format
+
+![](screenrecording.gif)
