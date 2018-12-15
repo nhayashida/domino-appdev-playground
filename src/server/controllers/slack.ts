@@ -39,6 +39,7 @@ const command = async (req: Request, res: Response) => {
 
   try {
     verify(req);
+    res.send('');
 
     const { command, text, trigger_id } = req.body;
 
@@ -74,10 +75,9 @@ const command = async (req: Request, res: Response) => {
       qs,
       uri: `${SLACK_API_ENDPOINT}/dialog.open`,
     });
-    res.status(200);
   } catch (err) {
     logger.error(err);
-    res.status(500);
+    res.status(500).send(err.message);
   }
 };
 
