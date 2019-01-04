@@ -1,4 +1,5 @@
 import { applyMiddleware, combineReducers, createStore as reduxCreateStore } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import actionTypes from '../actions/actionTypes';
 
@@ -49,5 +50,5 @@ const errorMessage = (
 
 export const createStore = () => {
   const reducers = combineReducers({ dqlResponse, dqlExplain, errorMessage });
-  return reduxCreateStore(reducers, applyMiddleware(thunk));
+  return reduxCreateStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
 };

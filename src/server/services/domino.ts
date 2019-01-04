@@ -17,58 +17,60 @@ const dbConfig = {
   filePath: process.env.DOMINO_DB_FILE_PATH,
 };
 
+enum BulkAPI {
+  ReadDocuments = 'bulkreaddocuments',
+  DeleteDocuments = 'bulkdeletedocuments',
+  ReplaceItems = 'bulkreplaceitems',
+  DeleteItems = 'bulkdeleteitems',
+}
+
+namespace BulkAPI {
+  export const execute = async (db: any, method: string, query: object) => {
+    switch (method.toLowerCase()) {
+      case BulkAPI.ReadDocuments:
+        return await db.bulkReadDocuments(query);
+      case BulkAPI.DeleteDocuments:
+        return await db.bulkDeleteDocuments(query);
+      case BulkAPI.ReplaceItems:
+        return await db.bulkReplaceItems(query);
+      case BulkAPI.DeleteItems:
+        return await db.bulkDeleteItems(query);
+      default:
+        throw new Error('Unknown method');
+    }
+  };
+}
+
 /**
  * Execute a domino-db api
  *
- * @param db
  * @param method
  * @param query
  * @returns response
  */
-const executeApi = async (db: any, method: string, query: object): Promise<DqlResponse> => {
-  const explain = await db.explainQuery(query);
+const execute = async (method: string, query: object): Promise<DqlResponse> => {
+  const server = await useServer(serverConfig);
+  const db = await server.useDatabase(dbConfig);
 
-  let bulkResponse;
-  switch (method.toLowerCase()) {
-    case 'bulkreaddocuments':
-      bulkResponse = await db.bulkReadDocuments(query);
-      break;
-    case 'bulkdeletedocuments':
-      bulkResponse = await db.bulkDeleteDocuments(query);
-      break;
-    case 'bulkreplaceitems':
-      bulkResponse = await db.bulkReplaceItems(query);
-      break;
-    case 'bulkdeleteitems':
-      bulkResponse = await db.bulkDeleteItems(query);
-      break;
-    default:
-      throw new Error('Unknown method');
-  }
+  const explain = await db.explainQuery(query);
+  const bulkResponse = await BulkAPI.execute(db, method, query);
 
   return Object.assign({ explain }, { bulkResponse });
 };
 
-const domino = {
-  /**
-   * Execute Domino Query Language
-   *
-   * @param method
-   * @param query
-   * @returns response
-   */
-  query: async (method: string, query: object): Promise<DqlResponse> => {
-    logger.debug(Object.assign({ method }, query));
+/**
+ * Execute Domino Query Language
+ *
+ * @param method
+ * @param query
+ * @returns response
+ */
+export const query = async (method: string, query: object): Promise<DqlResponse> => {
+  logger.debug(Object.assign({ method }, query));
 
-    try {
-      const server = await useServer(serverConfig);
-      const db = await server.useDatabase(dbConfig);
-      const res = await executeApi(db, method, query);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  },
+  try {
+    return await execute(method, query);
+  } catch (err) {
+    throw err;
+  }
 };
-
-export default domino;

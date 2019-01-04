@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import domino from '../services/domino';
+import { query } from '../services/domino';
 import logger from '../../common/utils/logger';
 
 /**
@@ -10,7 +10,7 @@ import logger from '../../common/utils/logger';
  */
 const dql = async (req: Request, res: Response) => {
   try {
-    res.send(await domino.query(req.query.method, req.body));
+    res.send(await query(req.query.method, req.body));
   } catch (err) {
     logger.error(err);
     res.status(500).send({ message: err.message });

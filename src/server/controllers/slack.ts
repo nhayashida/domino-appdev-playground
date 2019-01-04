@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import moment from 'moment';
 import rp from 'request-promise';
 import timingSafeCompare from 'tsscmp';
-import domino from '../services/domino';
+import { query } from '../services/domino';
 import { DQL_PROPERTIES } from '../../common/utils/constants';
 import logger from '../../common/utils/logger';
 
@@ -102,7 +102,7 @@ const submission = async (
       throw new Error('No properties found');
     }
 
-    const query = Object.keys(submission)
+    const q = Object.keys(submission)
       .map(key => {
         const option = props.options[key];
         const value = (submission[key] || '').replace(/‘|’/g, "'");
@@ -114,7 +114,7 @@ const submission = async (
         };
       })
       .reduce((acc, curr) => Object.assign(acc, curr));
-    const result = await domino.query(method, query);
+    const result = await query(method, q);
 
     respond({ text: JSON.stringify(result.bulkResponse, null, '  ') });
   } catch (err) {

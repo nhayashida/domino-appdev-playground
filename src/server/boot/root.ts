@@ -10,7 +10,7 @@ const root = async app => {
   router.get('/healthy', app.loopback.status());
   app.use(router);
 
-  if (process.env.SLACK_SIGNING_SECRET) {
+  if (process.env.SLACK_ACCESS_TOKEN && process.env.SLACK_SIGNING_SECRET) {
     const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
     slackInteractions.action({ type: 'dialog_submission' }, controllers.slack.submission);
     app.use('/slack/actions', slackInteractions.expressMiddleware());
