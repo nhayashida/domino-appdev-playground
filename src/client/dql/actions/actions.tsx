@@ -1,3 +1,4 @@
+import { Dispatch } from 'redux';
 import actionTypes from './actionTypes';
 
 const actions = {
@@ -11,7 +12,7 @@ const actions = {
     type: actionTypes.SET_DQL_EXPLAIN,
   }),
 
-  executeDql: (method: string, options: object) => async dispatch => {
+  executeDql: (method: string, options: object) => async (dispatch: Dispatch) => {
     dispatch(actions.hideErrorMessage());
 
     const res = await fetch(`/proton/dql?method=${method}`, {

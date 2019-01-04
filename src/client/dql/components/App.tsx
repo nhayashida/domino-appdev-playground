@@ -15,12 +15,12 @@ import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
 import { DQL_PROPERTIES } from '../../../common/utils/constants';
 
-interface Props {
+type Props = {
   dqlResponse: object;
   dqlExplain: string;
   errorMessage: string;
   executeDql: (method: string, options: object) => void;
-}
+};
 
 const mapStateToProps = (state: Props) => ({
   dqlResponse: state.dqlResponse,

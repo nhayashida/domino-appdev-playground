@@ -11,7 +11,7 @@ Object.freeze(initialState);
 
 const dqlResponse = (
   dqlResponse: object = initialState.dqlResponse,
-  action: { type: string; dqlResponse: object },
+  action: { type: number; dqlResponse: object },
 ): object => {
   switch (action.type) {
     case actionTypes.SET_DQL_RESPONSE:
@@ -23,7 +23,7 @@ const dqlResponse = (
 
 const dqlExplain = (
   dqlExplain: string = initialState.dqlExplain,
-  action: { type: string; dqlExplain: string },
+  action: { type: number; dqlExplain: string },
 ): string => {
   switch (action.type) {
     case actionTypes.SET_DQL_EXPLAIN:
@@ -35,7 +35,7 @@ const dqlExplain = (
 
 const errorMessage = (
   errorMessage: string = initialState.errorMessage,
-  action: { type: string; errorMessage: string },
+  action: { type: number; errorMessage: string },
 ): string => {
   switch (action.type) {
     case actionTypes.SHOW_ERROR_MESSAGE:

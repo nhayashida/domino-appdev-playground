@@ -1,60 +1,55 @@
 import { useServer } from '@domino/domino-db';
 import logger from '../../common/utils/logger';
 
-export interface DqlResponse {
+export type DqlResponse = {
   bulkResponse: object;
   explain: string;
-}
+};
 
-class Domino {
-  private serverConfig;
-  private dbConfig;
+const serverConfig = {
+  hostName: process.env.DOMINO_HOST,
+  connection: {
+    port: process.env.DOMINO_PROTON_PORT,
+  },
+};
 
-  constructor() {
-    this.serverConfig = {
-      hostName: process.env.DOMINO_HOST,
-      connection: {
-        port: process.env.DOMINO_PROTON_PORT,
-      },
-    };
+const dbConfig = {
+  filePath: process.env.DOMINO_DB_FILE_PATH,
+};
 
-    this.dbConfig = {
-      filePath: process.env.DOMINO_DB_FILE_PATH,
-    };
+/**
+ * Execute a domino-db api
+ *
+ * @param db
+ * @param method
+ * @param query
+ * @returns response
+ */
+const executeApi = async (db: any, method: string, query: object): Promise<DqlResponse> => {
+  const explain = await db.explainQuery(query);
+
+  let bulkResponse;
+  switch (method.toLowerCase()) {
+    case 'bulkreaddocuments':
+      bulkResponse = await db.bulkReadDocuments(query);
+      break;
+    case 'bulkdeletedocuments':
+      bulkResponse = await db.bulkDeleteDocuments(query);
+      break;
+    case 'bulkreplaceitems':
+      bulkResponse = await db.bulkReplaceItems(query);
+      break;
+    case 'bulkdeleteitems':
+      bulkResponse = await db.bulkDeleteItems(query);
+      break;
+    default:
+      throw new Error('Unknown method');
   }
 
-  /**
-   * Execute a domino-db api
-   *
-   * @param db
-   * @param method
-   * @param query
-   * @returns response
-   */
-  private async executeApi(db: any, method: string, query: object): Promise<DqlResponse> {
-    const explain = await db.explainQuery(query);
+  return Object.assign({ explain }, { bulkResponse });
+};
 
-    let bulkResponse;
-    switch (method.toLowerCase()) {
-      case 'bulkreaddocuments':
-        bulkResponse = await db.bulkReadDocuments(query);
-        break;
-      case 'bulkdeletedocuments':
-        bulkResponse = await db.bulkDeleteDocuments(query);
-        break;
-      case 'bulkreplaceitems':
-        bulkResponse = await db.bulkReplaceItems(query);
-        break;
-      case 'bulkdeleteitems':
-        bulkResponse = await db.bulkDeleteItems(query);
-        break;
-      default:
-        throw new Error('Unknown method');
-    }
-
-    return Object.assign({ explain }, { bulkResponse });
-  }
-
+const domino = {
   /**
    * Execute Domino Query Language
    *
@@ -62,19 +57,18 @@ class Domino {
    * @param query
    * @returns response
    */
-  async query(method: string, query: object): Promise<DqlResponse> {
+  query: async (method: string, query: object): Promise<DqlResponse> => {
     logger.debug(Object.assign({ method }, query));
 
     try {
-      const server = await useServer(this.serverConfig);
-      const db = await server.useDatabase(this.dbConfig);
-      const res = await this.executeApi(db, method, query);
+      const server = await useServer(serverConfig);
+      const db = await server.useDatabase(dbConfig);
+      const res = await executeApi(db, method, query);
       return res;
     } catch (err) {
       throw err;
     }
-  }
-}
+  },
+};
 
-const domino = new Domino();
 export default domino;

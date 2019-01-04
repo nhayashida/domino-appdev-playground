@@ -1,4 +1,4 @@
-FROM node:10.14.2-alpine
+FROM node:10.15.0-alpine
 
 ENV SERVICE_USER=proton
 ENV APP_DIR=/home/$SERVICE_USER/app/
