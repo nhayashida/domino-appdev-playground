@@ -4,7 +4,7 @@ import HTMLWebpackPlugin from 'html-webpack-plugin';
 
 const common: Configuration = {
   entry: {
-    dql: './src/client/dql/index.tsx',
+    dql: path.join(__dirname, 'src/client/dql/index.tsx'),
   },
   output: {
     filename: '[name].[chunkhash].js',
@@ -25,7 +25,7 @@ const common: Configuration = {
     rules: [
       {
         test: /\.(tsx)?$/,
-        use: [{ loader: 'awesome-typescript-loader' }],
+        use: [{ loader: 'ts-loader' }],
       },
       {
         test: /\.js$/,
@@ -55,7 +55,7 @@ const common: Configuration = {
   plugins: [
     new HTMLWebpackPlugin({
       filename: 'index.html',
-      template: './src/client/dql/index.html',
+      template: path.join(__dirname, 'src/client/dql/index.html'),
       meta: {
         viewport: 'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no',
       },
