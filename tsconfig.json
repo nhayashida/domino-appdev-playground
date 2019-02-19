@@ -11,9 +11,14 @@
     "target": "esnext",
     "jsx": "react",
     "moduleResolution": "node",
-    "typeRoots": ["./node_modules/@types"],
     "types": ["node"],
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./src/common/types/*"
+      ]
+    }
   },
   "include": [
     "./src/**/*"

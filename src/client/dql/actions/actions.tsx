@@ -2,7 +2,16 @@ import { Dispatch } from 'redux';
 import actionTypes from './actionTypes';
 
 const actions = {
-  setDqlResponse: (dqlResponse: object) => ({
+  showErrorMessage: (errorMessage: string) => ({
+    errorMessage,
+    type: actionTypes.SHOW_ERROR_MESSAGE,
+  }),
+
+  hideErrorMessage: () => ({
+    type: actionTypes.HIDE_ERROR_MESSAGE,
+  }),
+
+  setDqlResponse: (dqlResponse: DqlResponse) => ({
     dqlResponse,
     type: actionTypes.SET_DQL_RESPONSE,
   }),
@@ -12,7 +21,7 @@ const actions = {
     type: actionTypes.SET_DQL_EXPLAIN,
   }),
 
-  executeDql: (method: string, options: object) => async (dispatch: Dispatch) => {
+  executeDql: (method: string, options: DqlQuery) => async (dispatch: Dispatch) => {
     dispatch(actions.hideErrorMessage());
 
     const res = await fetch(`/proton/dql?method=${method}`, {
@@ -31,15 +40,6 @@ const actions = {
       dispatch(actions.setDqlExplain(data.explain));
     }
   },
-
-  showErrorMessage: (errorMessage: string) => ({
-    errorMessage,
-    type: actionTypes.SHOW_ERROR_MESSAGE,
-  }),
-
-  hideErrorMessage: () => ({
-    type: actionTypes.HIDE_ERROR_MESSAGE,
-  }),
 };
 
 export default actions;

@@ -9,7 +9,8 @@ const common: Configuration = {
   output: {
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js',
-    path: path.join(__dirname, 'dist/dql'),
+    path: path.join(__dirname, 'dist/proton/dql'),
+    publicPath: '/proton/dql',
   },
   optimization: {
     runtimeChunk: true,

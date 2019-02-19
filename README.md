@@ -2,7 +2,7 @@
 #### (Optoin 1). Run app from console
 1. Copy the domino-db archive to the root directory
 
-2. Edit the environment variables in [.env](.env)
+2. Copy [.env.sample](.env.sample) as `.env` and edit the environment variables in the 
 
 3.  Build
 ```
@@ -19,7 +19,7 @@ npm run start
 
 1. Copy the domino-db archive to the root directory
 
-2. Edit the environment variables in [.env](.env)
+2. Copy [.env.sample](.env.sample) as `.env` and edit the environment variables in the 
 
 3.  Build a Docker image
 ```
@@ -35,7 +35,7 @@ docker run -it -p 3000:3000 proton-dql-playground:latest
 
 #### (Option 3). Run app from Visual Studio Code
 1. Open your local repository with Visual Studio Code
-1. Edit the environment variables in [.env](.env)
+1. Copy [.env.sample](.env.sample) as `.env` and edit the environment variables in the 
 1. Select **Debug** -> **Start Debugging**
 
 ## Play with app

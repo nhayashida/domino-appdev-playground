@@ -1,11 +1,6 @@
 import { useServer } from '@domino/domino-db';
 import logger from '../../common/utils/logger';
 
-export type DqlResponse = {
-  bulkResponse: object;
-  explain: string;
-};
-
 const serverConfig = {
   hostName: process.env.DOMINO_HOST,
   connection: {
@@ -25,7 +20,7 @@ enum BulkAPI {
 }
 
 namespace BulkAPI {
-  export const execute = async (db: any, method: string, query: object) => {
+  export const execute = async (db: any, method: string, query: DqlQuery) => {
     switch (method.toLowerCase()) {
       case BulkAPI.ReadDocuments:
         return await db.bulkReadDocuments(query);
@@ -42,34 +37,23 @@ namespace BulkAPI {
 }
 
 /**
- * Execute a domino-db api
- *
- * @param method
- * @param query
- * @returns response
- */
-const execute = async (method: string, query: object): Promise<DqlResponse> => {
-  const server = await useServer(serverConfig);
-  const db = await server.useDatabase(dbConfig);
-
-  const explain = await db.explainQuery(query);
-  const bulkResponse = await BulkAPI.execute(db, method, query);
-
-  return Object.assign({ explain }, { bulkResponse });
-};
-
-/**
  * Execute Domino Query Language
  *
  * @param method
  * @param query
  * @returns response
  */
-export const query = async (method: string, query: object): Promise<DqlResponse> => {
+export const query = async (method: string, query: DqlQuery): Promise<DqlResponse> => {
   logger.debug(Object.assign({ method }, query));
 
   try {
-    return await execute(method, query);
+    const server = await useServer(serverConfig);
+    const db = await server.useDatabase(dbConfig);
+
+    const explain = await db.explainQuery(query);
+    const bulkResponse = await BulkAPI.execute(db, method, query);
+
+    return Object.assign({ explain }, { bulkResponse });
   } catch (err) {
     throw err;
   }

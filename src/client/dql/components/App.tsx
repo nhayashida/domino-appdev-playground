@@ -9,28 +9,28 @@ import {
 } from 'carbon-components-react';
 import classnames from 'classnames';
 import { isEmpty } from 'lodash';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
 import { DQL_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
-  dqlResponse: object;
-  dqlExplain: string;
   errorMessage: string;
-  executeDql: (method: string, options: object) => void;
+  dqlResponse: DqlResponse;
+  dqlExplain: string;
+  executeDql: (method: string, options: DqlQuery) => void;
 };
 
 const mapStateToProps = (state: Props) => ({
+  errorMessage: state.errorMessage,
   dqlResponse: state.dqlResponse,
   dqlExplain: state.dqlExplain,
-  errorMessage: state.errorMessage,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
 
-class App extends PureComponent<Props> {
+class App extends Component<Props> {
   onResponseCopy() {
     const selection = window.getSelection();
     if (selection) {
@@ -43,42 +43,33 @@ class App extends PureComponent<Props> {
 
   generateTabs(): JSX.Element[] {
     return DQL_PROPERTIES.map((props, tabIdx) => {
-      const inputFields = Object.keys(props.options).map((key, optionIdx) => {
-        const option = props.options[key];
-        return (
-          <TextInput
-            key={optionIdx}
-            id={`${props.method}-${key}`}
-            className="input-field"
-            labelText={key}
-            placeholder={option.placeholder}
-            data-key={key}
-            data-type={option.type}
-          />
-        );
-      });
+      const inputFields = Object.keys(props.options).map((key, i) => (
+        <TextInput
+          key={i}
+          id={`${props.method}-${key}`}
+          className="input-field"
+          labelText={key}
+          placeholder={props.options[key].placeholder}
+          data-key={key}
+          ref={React.createRef<HTMLInputElement>()}
+        />
+      ));
 
       const onExecuteClick = () => {
         const options = inputFields
           .map(inputField => {
-            const { props } = inputField;
-            const elem: any = document.getElementById(props.id);
-            if (elem) {
-              const key = props['data-key'];
-              let value = elem.value;
-              try {
-                const type = props['data-type'];
-                if (value && (type === 'object' || type === 'array')) {
-                  value = JSON.parse(elem.value);
-                }
-              } catch (err) {
-                // do nothing
-              }
-              return { [key]: value };
+            const { props, ref } = inputField as any; // TODO
+            const elem = ref.current || { value: '' };
+            const key = props['data-key'];
+            try {
+              return { [key]: JSON.parse(elem.value) };
+            } catch (err) {
+              // An error is thrown if the type of the value is string.
+              // Then, use the value as is.
+              return { [key]: elem.value };
             }
-            return {};
           })
-          .reduce((acc, curr) => Object.assign(acc, curr));
+          .reduce((acc, curr) => Object.assign(acc, curr)) as DqlQuery;
 
         this.props.executeDql(props.method, options);
       };

@@ -4,39 +4,15 @@ import thunk from 'redux-thunk';
 import actionTypes from '../actions/actionTypes';
 
 const initialState = {
-  dqlResponse: {},
+  dqlResponse: {} as DqlResponse,
   dqlExplain: '',
   errorMessage: '',
 };
 Object.freeze(initialState);
 
-const dqlResponse = (
-  dqlResponse: object = initialState.dqlResponse,
-  action: { type: number; dqlResponse: object },
-): object => {
-  switch (action.type) {
-    case actionTypes.SET_DQL_RESPONSE:
-      return action.dqlResponse;
-  }
-
-  return dqlResponse;
-};
-
-const dqlExplain = (
-  dqlExplain: string = initialState.dqlExplain,
-  action: { type: number; dqlExplain: string },
-): string => {
-  switch (action.type) {
-    case actionTypes.SET_DQL_EXPLAIN:
-      return action.dqlExplain;
-  }
-
-  return dqlExplain;
-};
-
 const errorMessage = (
   errorMessage: string = initialState.errorMessage,
-  action: { type: number; errorMessage: string },
+  action: { type: string; errorMessage: string },
 ): string => {
   switch (action.type) {
     case actionTypes.SHOW_ERROR_MESSAGE:
@@ -48,7 +24,31 @@ const errorMessage = (
   return errorMessage;
 };
 
+const dqlResponse = (
+  dqlResponse: DqlResponse = initialState.dqlResponse,
+  action: { type: string; dqlResponse: DqlResponse },
+): object => {
+  switch (action.type) {
+    case actionTypes.SET_DQL_RESPONSE:
+      return action.dqlResponse;
+  }
+
+  return dqlResponse;
+};
+
+const dqlExplain = (
+  dqlExplain: string = initialState.dqlExplain,
+  action: { type: string; dqlExplain: string },
+): string => {
+  switch (action.type) {
+    case actionTypes.SET_DQL_EXPLAIN:
+      return action.dqlExplain;
+  }
+
+  return dqlExplain;
+};
+
 export const createStore = () => {
-  const reducers = combineReducers({ dqlResponse, dqlExplain, errorMessage });
+  const reducers = combineReducers({ errorMessage, dqlResponse, dqlExplain });
   return reduxCreateStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
 };

@@ -113,7 +113,7 @@ const submission = async (
               : value,
         };
       })
-      .reduce((acc, curr) => Object.assign(acc, curr));
+      .reduce((acc, curr) => Object.assign(acc, curr)) as DqlQuery;
     const result = await query(method, q);
 
     respond({ text: JSON.stringify(result.bulkResponse, null, '  ') });

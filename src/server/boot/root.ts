@@ -1,13 +1,17 @@
 import { createMessageAdapter } from '@slack/interactive-messages';
 import bparser from 'body-parser';
 import { Request, Response, Router } from 'express';
+import path from 'path';
 import controllers from '../controllers';
 
 const root = async app => {
   const router: Router = app.loopback.Router();
   router.get('/', (req: Request, res: Response) => res.redirect('/proton/dql'));
-  router.post('/proton/dql', bparser.json(), controllers.dql);
   router.get('/healthy', app.loopback.status());
+  router.get('/proton/dql', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../../../dist/proton/dql', 'index.html'));
+  });
+  router.post('/proton/dql', bparser.json(), controllers.dql);
   app.use(router);
 
   if (process.env.SLACK_ACCESS_TOKEN && process.env.SLACK_SIGNING_SECRET) {
