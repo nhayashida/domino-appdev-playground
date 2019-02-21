@@ -1,11 +1,63 @@
 import { useServer } from '@domino/domino-db';
+import fs from 'fs';
+import { fromPairs, isEmpty } from 'lodash';
+import path from 'path';
 import logger from '../../common/utils/logger';
 
-const serverConfig = {
-  hostName: process.env.DOMINO_HOST,
+type ServerConfig = {
+  hostName: string;
   connection: {
-    port: process.env.DOMINO_PROTON_PORT,
-  },
+    port: string;
+    secure?: boolean;
+  };
+  credentials?: Credentials;
+};
+
+type Credentials = {
+  rootCertificate: Buffer;
+  clientCertificate: Buffer;
+  clientKey: Buffer;
+};
+
+let serverConfig = {} as ServerConfig;
+
+const getServerConfig = (): ServerConfig => {
+  if (isEmpty(serverConfig)) {
+    const secure = process.env.DOMINO_PROTON_SECURE === 'true';
+
+    serverConfig = {
+      hostName: process.env.DOMINO_HOST || '',
+      connection: {
+        secure,
+        port: process.env.DOMINO_PROTON_PORT || '',
+      },
+    };
+
+    if (secure) {
+      try {
+        Object.assign(serverConfig, { credentials: readCredentials() });
+      } catch (err) {
+        throw err;
+      }
+    }
+  }
+
+  return serverConfig;
+};
+
+const readCredentials = (): Credentials => {
+  try {
+    const props = {
+      rootCertificate: process.env.DOMINO_PROTON_ROOT_CERT_PATH,
+      clientCertificate: process.env.DOMINO_PROTON_CLIENT_CERT_PATH,
+      clientKey: process.env.DOMINO_PROTON_CLIENT_KEY_PATH,
+    };
+    return fromPairs(
+      Object.keys(props).map(key => [key, fs.readFileSync(path.resolve(props[key]))]),
+    ) as Credentials;
+  } catch (err) {
+    throw err;
+  }
 };
 
 const dbConfig = {
@@ -47,13 +99,13 @@ export const query = async (method: string, query: DqlQuery): Promise<DqlRespons
   logger.debug(Object.assign({ method }, query));
 
   try {
-    const server = await useServer(serverConfig);
+    const server = await useServer(getServerConfig());
     const db = await server.useDatabase(dbConfig);
 
     const explain = await db.explainQuery(query);
     const bulkResponse = await BulkAPI.execute(db, method, query);
 
-    return Object.assign({ explain }, { bulkResponse });
+    return { explain, bulkResponse };
   } catch (err) {
     throw err;
   }

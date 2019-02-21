@@ -13,7 +13,6 @@ const common: Configuration = {
     publicPath: '/proton/dql',
   },
   optimization: {
-    runtimeChunk: true,
     splitChunks: {
       name: 'vendor',
       chunks: 'initial',
@@ -35,18 +34,18 @@ const common: Configuration = {
       },
       {
         test: /\.scss$/,
+        exclude: /node_modules/,
         use: [
-          'style-loader',
+          {
+            loader: 'style-loader',
+          },
           {
             loader: 'css-loader',
-            options: {
-              importLoaders: 2,
-            },
           },
           {
             loader: 'sass-loader',
             options: {
-              includePaths: [path.resolve(__dirname, '..', 'node_modules')],
+              includePaths: ['node_modules'],
             },
           },
         ],
