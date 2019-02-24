@@ -5,7 +5,6 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
   dqlResponse: {} as DqlResponse,
-  dqlExplain: '',
   errorMessage: '',
 };
 Object.freeze(initialState);
@@ -36,19 +35,7 @@ const dqlResponse = (
   return dqlResponse;
 };
 
-const dqlExplain = (
-  dqlExplain: string = initialState.dqlExplain,
-  action: { type: string; dqlExplain: string },
-): string => {
-  switch (action.type) {
-    case actionTypes.SET_DQL_EXPLAIN:
-      return action.dqlExplain;
-  }
-
-  return dqlExplain;
-};
-
 export const createStore = () => {
-  const reducers = combineReducers({ errorMessage, dqlResponse, dqlExplain });
+  const reducers = combineReducers({ errorMessage, dqlResponse });
   return reduxCreateStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
 };

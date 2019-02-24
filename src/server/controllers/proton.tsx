@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { query } from '../services/domino';
 import logger from '../../common/utils/logger';
 
@@ -8,13 +8,13 @@ import logger from '../../common/utils/logger';
  * @param req
  * @param res
  */
-const dql = async (req: Request, res: Response) => {
+const dql = async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.send(await query(req.query.method, req.body));
   } catch (err) {
     logger.error(err);
-    res.status(500).send({ message: err.message });
+    next(err);
   }
 };
 
-export default dql;
+export default { dql };

@@ -1,7 +1,7 @@
-import dql from './dql';
+import proton from './proton';
 import slack from './slack';
 
 export default {
-  dql,
+  proton,
   slack,
 };

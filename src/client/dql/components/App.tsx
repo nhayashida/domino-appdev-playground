@@ -1,15 +1,19 @@
+import { Api20, User20 } from '@carbon/icons-react';
+import { Button, CodeSnippet, TextInput, InlineNotification } from 'carbon-components-react';
 import {
-  Button,
-  CodeSnippet,
-  Tab,
-  Tabs,
-  TextArea,
-  TextInput,
-  InlineNotification,
-} from 'carbon-components-react';
+  Header,
+  HeaderGlobalAction,
+  HeaderGlobalBar,
+  HeaderMenuButton,
+  HeaderName,
+  SideNav,
+  SideNavItems,
+  SideNavMenu,
+  SideNavMenuItem,
+} from 'carbon-components-react/lib/components/UIShell';
 import classnames from 'classnames';
-import { isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { isEmpty, fromPairs } from 'lodash';
+import React, { Component, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
@@ -18,20 +22,117 @@ import { DQL_PROPERTIES } from '../../../common/utils/constants';
 type Props = {
   errorMessage: string;
   dqlResponse: DqlResponse;
-  dqlExplain: string;
   executeDql: (method: string, options: DqlQuery) => void;
+};
+
+type State = {
+  sideNavOpened: boolean;
+  selectedMethod: string;
 };
 
 const mapStateToProps = (state: Props) => ({
   errorMessage: state.errorMessage,
   dqlResponse: state.dqlResponse,
-  dqlExplain: state.dqlExplain,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
 
-class App extends Component<Props> {
-  onResponseCopy() {
+class App extends Component<Props, State> {
+  private inputFields = React.createRef<HTMLDivElement>();
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      sideNavOpened: false,
+      selectedMethod: 'bulkReadDocuments',
+    };
+  }
+
+  onSideNavToggle = () => {
+    this.setState({ sideNavOpened: !this.state.sideNavOpened });
+  };
+
+  onMethodSelect = (e: MouseEvent<HTMLAnchorElement>) => {
+    const method = e.currentTarget.textContent || this.state.selectedMethod;
+    this.setState({ sideNavOpened: false, selectedMethod: method });
+  };
+
+  generateSideNav(): JSX.Element {
+    const { sideNavOpened, selectedMethod } = this.state;
+
+    const sideNavClasses = classnames('side-nav', {
+      closed: !sideNavOpened,
+    });
+
+    const menuItems = DQL_PROPERTIES.map((props, i) => {
+      const ariaCurrent = props.method === selectedMethod ? 'page' : '';
+      return (
+        <SideNavMenuItem key={i} aria-current={ariaCurrent} onClick={this.onMethodSelect}>
+          {props.method}
+        </SideNavMenuItem>
+      );
+    });
+
+    return (
+      <SideNav className={sideNavClasses} aria-label="Side navigation">
+        <SideNavItems>
+          <SideNavMenu icon={<Api20 />} defaultExpanded={true} title="Bulk APIs">
+            {menuItems}
+          </SideNavMenu>
+        </SideNavItems>
+      </SideNav>
+    );
+  }
+
+  generateInputFields(): JSX.Element | null {
+    const dqlProps = DQL_PROPERTIES.find(props => props.method === this.state.selectedMethod);
+    if (!dqlProps) {
+      return null;
+    }
+
+    const inputFields = Object.keys(dqlProps.options).map((key, i) => (
+      <TextInput
+        key={i}
+        id={key}
+        className="input-field"
+        labelText={key}
+        placeholder={dqlProps.options[key].placeholder}
+        data-key={key}
+        ref={React.createRef<HTMLInputElement>()}
+      />
+    ));
+
+    return (
+      <div className="input-field-container" ref={this.inputFields}>
+        {inputFields}
+      </div>
+    );
+  }
+
+  onExecute = () => {
+    const elem = this.inputFields.current;
+    if (!elem) {
+      return;
+    }
+
+    const options = fromPairs(
+      Array.from(elem.querySelectorAll('input')).map(input => {
+        const { id, value } = input;
+        try {
+          return [id, JSON.parse(value)];
+        } catch (err) {
+          // An error is thrown if the type of the value is string.
+          // Then, use the value as is.
+          return [id, value];
+        }
+      }),
+    ) as DqlQuery;
+
+    this.props.executeDql(this.state.selectedMethod, options);
+  };
+
+  onResponseCopy = () => {
     const selection = window.getSelection();
     if (selection) {
       selection.selectAllChildren(document.querySelectorAll('code')[0]);
@@ -39,88 +140,61 @@ class App extends Component<Props> {
 
       selection.removeAllRanges();
     }
-  }
-
-  generateTabs(): JSX.Element[] {
-    return DQL_PROPERTIES.map((props, tabIdx) => {
-      const inputFields = Object.keys(props.options).map((key, i) => (
-        <TextInput
-          key={i}
-          id={`${props.method}-${key}`}
-          className="input-field"
-          labelText={key}
-          placeholder={props.options[key].placeholder}
-          data-key={key}
-          ref={React.createRef<HTMLInputElement>()}
-        />
-      ));
-
-      const onExecuteClick = () => {
-        const options = inputFields
-          .map(inputField => {
-            const { props, ref } = inputField as any; // TODO
-            const elem = ref.current || { value: '' };
-            const key = props['data-key'];
-            try {
-              return { [key]: JSON.parse(elem.value) };
-            } catch (err) {
-              // An error is thrown if the type of the value is string.
-              // Then, use the value as is.
-              return { [key]: elem.value };
-            }
-          })
-          .reduce((acc, curr) => Object.assign(acc, curr)) as DqlQuery;
-
-        this.props.executeDql(props.method, options);
-      };
-
-      return (
-        <Tab key={tabIdx} label={props.method}>
-          <div className="input-container">{inputFields}</div>
-          <Button className="execute-button" onClick={onExecuteClick}>
-            execute
-          </Button>
-        </Tab>
-      );
-    });
-  }
+  };
 
   render(): JSX.Element {
-    const { dqlResponse, dqlExplain, errorMessage } = this.props;
+    const { errorMessage, dqlResponse } = this.props;
+    const { sideNavOpened, selectedMethod } = this.state;
 
-    const response = !isEmpty(dqlResponse)
-      ? JSON.stringify(this.props.dqlResponse, null, '  ')
-      : '';
-    const explain = dqlExplain ? dqlExplain.trim() : '';
+    const { bulkResponse, explain } = dqlResponse;
+    const response = !isEmpty(bulkResponse) ? JSON.stringify(bulkResponse, null, 2) : '';
 
-    const resultClasses = classnames('result', {
-      'has-result': response || explain,
+    const responseClasses = classnames('dql-response', {
+      'has-data': response,
     });
-    const notificationClasses = classnames('error', {
+    const explainClasses = classnames('explain', '.bx--body');
+    const notificationClasses = classnames('error-notification', {
       'has-message': errorMessage,
     });
 
     return (
-      <div className="container">
-        <Tabs className="tabs">{this.generateTabs()}</Tabs>
-        <div className={resultClasses}>
-          <div className="response">
-            <label className="bx--label">bulkResponse</label>
-            <CodeSnippet type="multi" onClick={this.onResponseCopy}>
-              {response}
-            </CodeSnippet>
+      <div className="root">
+        <Header aria-label={selectedMethod}>
+          <HeaderMenuButton
+            aria-label={sideNavOpened ? 'Close' : 'Open'}
+            isActive={sideNavOpened}
+            onClick={this.onSideNavToggle}
+          />
+          <HeaderName prefix="">{selectedMethod}</HeaderName>
+          <HeaderGlobalBar>
+            <HeaderGlobalAction aria-label="Sign in with Domino">
+              <User20 />
+            </HeaderGlobalAction>
+          </HeaderGlobalBar>
+        </Header>
+        {this.generateSideNav()}
+        <main className="content">
+          {this.generateInputFields()}
+          <Button onClick={this.onExecute}>Execute</Button>
+          <div className={responseClasses}>
+            <div className="bulk-response">
+              <label className="bx--label">bulkResponse</label>
+              <CodeSnippet type="multi" onClick={this.onResponseCopy}>
+                {response}
+              </CodeSnippet>
+            </div>
+            <div className={explainClasses}>
+              <pre>{explain ? explain.trim() : ''}</pre>
+            </div>
           </div>
-          <div className="explain">
-            <TextArea labelText="" rows={11} value={explain} />
-          </div>
-        </div>
-        <InlineNotification
-          className={notificationClasses}
-          hideCloseButton={true}
-          kind="error"
-          title="Error"
-          subtitle={errorMessage}
-        />
+          <InlineNotification
+            className={notificationClasses}
+            hideCloseButton={true}
+            kind="error"
+            title="Error"
+            subtitle={errorMessage}
+          />
+        </main>
       </div>
     );
   }

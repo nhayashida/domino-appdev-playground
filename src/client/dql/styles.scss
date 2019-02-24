@@ -1,65 +1,69 @@
 @import '~carbon-components/scss/globals/scss/styles';
 
-.container {
-  margin: 40px;
+.root {
+  padding-top: 3rem;
 
-  .tabs {
-    .bx--tabs-trigger{
-      padding: 0;
-    }
-
-    .bx--tabs__nav {
-      margin: 0;
+  .side-nav {
+    &.closed {
+      width: 0;
     }
   }
-
-  .input-container {
-    margin-top: 1.5rem;
-
-    .input-field {
-      margin-bottom: 1.5rem;
-    }
-  }
-
-  .execute-button {
-    margin-bottom: 3rem;
-  }
-
-  .result {
-    display: none;
-
-    &.has-result {
-      display: block;
-    }
-
-    .response {
-      .bx--label {
-        margin-bottom: 1rem;
-      }
   
-      .bx--snippet--multi {
-        max-width: 100%;
+  .content {
+    padding: 1.5rem;
+
+    .tabs {
+      .bx--tabs-trigger{
+        padding: 0;
+      }
+
+      .bx--tabs__nav {
+        margin: 0;
+      }
+    }
+
+    .input-field-container {
+      margin: 1rem 0;
+
+      .input-field {
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    .dql-response {
+      margin-top: 4rem;
+      display: none;
+
+      &.has-data {
+        display: block;
+      }
+
+      .bulk-response {
+        .bx--label {
+          margin-bottom: 1rem;
+        }
+    
+        .bx--snippet--multi {
+          max-width: 100%;
+        }  
+      }
+    
+      .explain {
+        padding-top: 1.5rem;
+        
+        & pre {
+          font-size: 75%;
+          white-space: pre-wrap;
+        }
       }  
     }
-  
-    .explain {
-      padding-top: 1rem;
-  
-      .bx--label {
-        display: none;
+
+    .error-notification {
+      display: none;
+
+      &.has-message {
+        display: flex;
       }
-  
-      .bx--text-area {
-        padding: 0 1rem;
-      }  
-    }  
-  }
-
-  .error {
-    display: none;
-
-    &.has-message {
-      display: flex;
     }
   }
 }

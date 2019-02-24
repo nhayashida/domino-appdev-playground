@@ -16,11 +16,6 @@ const actions = {
     type: actionTypes.SET_DQL_RESPONSE,
   }),
 
-  setDqlExplain: (dqlExplain: string) => ({
-    dqlExplain,
-    type: actionTypes.SET_DQL_EXPLAIN,
-  }),
-
   executeDql: (method: string, options: DqlQuery) => async (dispatch: Dispatch) => {
     dispatch(actions.hideErrorMessage());
 
@@ -34,10 +29,9 @@ const actions = {
 
     const data = await res.json();
     if (!res.ok) {
-      dispatch(actions.showErrorMessage(data.message));
+      dispatch(actions.showErrorMessage(data.error.message));
     } else {
-      dispatch(actions.setDqlResponse(data.bulkResponse));
-      dispatch(actions.setDqlExplain(data.explain));
+      dispatch(actions.setDqlResponse(data));
     }
   },
 };
