@@ -11,7 +11,7 @@
     "build": "npm run env && npm run lint && rimraf ./dist && tsc && npm run copy && webpack --config webpack.prod.ts",
     "build:dev": "npm run env && rimraf ./dist && tsc && npm run copy && webpack --config webpack.dev.ts",
     "start": "cross-env NODE_ENV=production node -r dotenv/config dist/server/server.js",
-    "copy": "cpx \"./src/server/*.json\" ./dist/server/"
+    "copy": "cpx \"./src/common/models/*.json\" ./dist/common/models && cpx \"./src/server/*.json\" ./dist/server/"
   },
   "dependencies": {
     "@carbon/icons-react": "0.0.1-alpha.12",

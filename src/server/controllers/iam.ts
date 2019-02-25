@@ -1,31 +1,11 @@
-import { IAMClient, GRANT_TYPES } from '@domino/node-iam-client';
-import { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
+import { NextFunction, Response } from 'express';
+import { Token } from '../services/cache';
+import { getAuthContext, getToken } from '../services/iam';
 import logger from '../../common/utils/logger';
-
-let iamClient;
-(async () => {
-  try {
-    iamClient = await IAMClient.createInstance({
-      iam_server: process.env.DOMINO_IAM_SERVER_ORIGIN,
-      client_id: process.env.DOMINO_IAM_CLIENT_ID,
-      client_secret: process.env.DOMINO_IAM_CLIENT_SECRET,
-      redirect_uri: `${process.env.DOMINO_IAM_CLIENT_ORIGIN}/iam/callback`,
-      httpOptions: {
-        rejectUnauthorized: false,
-      },
-    });
-  } catch (err) {
-    throw err;
-  }
-})();
 
 const authUrl = async (req, res: Response, next: NextFunction) => {
   try {
-    const { authorizationUrl, secureCtx } = iamClient.createAuthorizationCtx({
-      scopes: (process.env.DOMINO_IAM_CLIENT_SCOPE || '').split(' '),
-      grantType: GRANT_TYPES.AUTHORIZATION_CODE,
-    });
+    const { authorizationUrl, secureCtx } = await getAuthContext();
 
     req.session.secureCtx = secureCtx;
     res.send({ authUrl: authorizationUrl });
@@ -36,14 +16,18 @@ const authUrl = async (req, res: Response, next: NextFunction) => {
 };
 
 const callback = async (req, res: Response, next: NextFunction) => {
-  const { secureCtx } = req.session;
-  delete req.session.secureCtx;
+  try {
+    const token = await getToken(req);
+    const { sid } = token;
 
-  const token = await iamClient.getToken(req, secureCtx);
-  const data = await iamClient.introspectAccessToken(token.access_token);
-  logger.debug(data);
+    // Store token into cache
+    await Token.set(sid, token);
 
-  res.redirect('/proton/dql');
+    res.redirect(`/playground?sid=${sid}`);
+  } catch (err) {
+    logger.error(err);
+    res.redirect(`/playground?error=${err.message}`);
+  }
 };
 
 export default { authUrl, callback };

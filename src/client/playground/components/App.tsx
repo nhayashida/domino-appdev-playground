@@ -4,8 +4,10 @@ import {
   Header,
   HeaderGlobalAction,
   HeaderGlobalBar,
+  HeaderMenu,
   HeaderMenuButton,
   HeaderName,
+  HeaderNavigation,
   SideNav,
   SideNavItems,
   SideNavMenu,
@@ -20,6 +22,7 @@ import actions from '../actions/actions';
 import { DQL_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
+  userId?: string;
   errorMessage: string;
   dqlResponse: DqlResponse;
   executeDql: (method: string, options: DqlQuery) => void;
@@ -67,7 +70,18 @@ class App extends Component<Props, State> {
   };
 
   generateHeader(): JSX.Element {
+    const { userId } = this.props;
     const { sideNavOpened, selectedMethod } = this.state;
+
+    const userAction = !userId ? (
+      <HeaderGlobalAction aria-label="Sign in" onClick={this.onSignIn}>
+        <User20 />
+      </HeaderGlobalAction>
+    ) : (
+      <HeaderNavigation aria-label="User">
+        <HeaderMenu aria-label={userId} />
+      </HeaderNavigation>
+    );
 
     return (
       <Header aria-label={selectedMethod}>
@@ -77,11 +91,7 @@ class App extends Component<Props, State> {
           onClick={this.onSideNavToggle}
         />
         <HeaderName prefix="">{selectedMethod}</HeaderName>
-        <HeaderGlobalBar>
-          <HeaderGlobalAction aria-label="Sign in" onClick={this.onSignIn}>
-            <User20 />
-          </HeaderGlobalAction>
-        </HeaderGlobalBar>
+        <HeaderGlobalBar>{userAction}</HeaderGlobalBar>
       </Header>
     );
   }

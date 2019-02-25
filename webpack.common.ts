@@ -12,7 +12,7 @@ const replaceTable = {
 
 const common: Configuration = {
   entry: {
-    playground: path.join(__dirname, 'src/client/dql/index.tsx'),
+    playground: path.join(__dirname, 'src/client/playground/index.tsx'),
   },
   output: {
     filename: '[name].bundle.js',

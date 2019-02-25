@@ -2,11 +2,12 @@ import React, { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
+  initState?: string;
 };
 
 // tslint:disable-next-line:variable-name
 const Html = (props: Props): JSX.Element => {
-  const { children } = props;
+  const { children, initState } = props;
 
   return (
     <html>
@@ -18,6 +19,7 @@ const Html = (props: Props): JSX.Element => {
       </head>
       <body>
         <div id="app">{children}</div>
+        <script id="init-state" type="text/plain" data-state={initState} />
         <script src="/vendor.bundle.js" />
         <script src="/playground.bundle.js" />
       </body>
