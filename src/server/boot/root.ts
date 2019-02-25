@@ -1,13 +1,22 @@
 import { createMessageAdapter } from '@slack/interactive-messages';
 import bparser from 'body-parser';
 import { Request, Response, Router } from 'express';
+import session from 'express-session';
 import path from 'path';
 import controllers from '../controllers';
 
 const root = async app => {
   const router: Router = app.loopback.Router();
+  router.use(
+    session({ secret: process.env.DOMINO_IAM_CLIENT_ID, saveUninitialized: false, resave: false }),
+  );
+
   router.get('/', (req: Request, res: Response) => res.redirect('/proton/dql'));
   router.get('/healthy', app.loopback.status());
+
+  router.get('/iam/auth/url', controllers.iam.authUrl);
+  router.get('/iam/callback', controllers.iam.callback);
+
   router.get('/proton/dql', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../../../dist/proton/dql', 'index.html'));
   });

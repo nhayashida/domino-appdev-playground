@@ -23,6 +23,7 @@ type Props = {
   errorMessage: string;
   dqlResponse: DqlResponse;
   executeDql: (method: string, options: DqlQuery) => void;
+  showErrorMessage(message: string): void;
 };
 
 type State = {
@@ -53,6 +54,38 @@ class App extends Component<Props, State> {
     this.setState({ sideNavOpened: !this.state.sideNavOpened });
   };
 
+  onSignIn = async () => {
+    const res = await fetch('/iam/auth/url');
+
+    const data = await res.json();
+    if (!res.ok) {
+      this.props.showErrorMessage(data.error.message);
+    } else {
+      // Redirect to authorization page
+      location.href = data.authUrl;
+    }
+  };
+
+  generateHeader(): JSX.Element {
+    const { sideNavOpened, selectedMethod } = this.state;
+
+    return (
+      <Header aria-label={selectedMethod}>
+        <HeaderMenuButton
+          aria-label={sideNavOpened ? 'Close' : 'Open'}
+          isActive={sideNavOpened}
+          onClick={this.onSideNavToggle}
+        />
+        <HeaderName prefix="">{selectedMethod}</HeaderName>
+        <HeaderGlobalBar>
+          <HeaderGlobalAction aria-label="Sign in" onClick={this.onSignIn}>
+            <User20 />
+          </HeaderGlobalAction>
+        </HeaderGlobalBar>
+      </Header>
+    );
+  }
+
   onMethodSelect = (e: MouseEvent<HTMLAnchorElement>) => {
     const method = e.currentTarget.textContent || this.state.selectedMethod;
     this.setState({ sideNavOpened: false, selectedMethod: method });
@@ -77,7 +110,7 @@ class App extends Component<Props, State> {
     return (
       <SideNav className={sideNavClasses} aria-label="Side navigation">
         <SideNavItems>
-          <SideNavMenu icon={<Api20 />} defaultExpanded={true} title="Bulk APIs">
+          <SideNavMenu icon={<Api20 />} defaultExpanded={true} title="domino-db">
             {menuItems}
           </SideNavMenu>
         </SideNavItems>
@@ -144,7 +177,6 @@ class App extends Component<Props, State> {
 
   render(): JSX.Element {
     const { errorMessage, dqlResponse } = this.props;
-    const { sideNavOpened, selectedMethod } = this.state;
 
     const { bulkResponse, explain } = dqlResponse;
     const response = !isEmpty(bulkResponse) ? JSON.stringify(bulkResponse, null, 2) : '';
@@ -159,19 +191,7 @@ class App extends Component<Props, State> {
 
     return (
       <div className="root">
-        <Header aria-label={selectedMethod}>
-          <HeaderMenuButton
-            aria-label={sideNavOpened ? 'Close' : 'Open'}
-            isActive={sideNavOpened}
-            onClick={this.onSideNavToggle}
-          />
-          <HeaderName prefix="">{selectedMethod}</HeaderName>
-          <HeaderGlobalBar>
-            <HeaderGlobalAction aria-label="Sign in with Domino">
-              <User20 />
-            </HeaderGlobalAction>
-          </HeaderGlobalBar>
-        </Header>
+        {this.generateHeader()}
         {this.generateSideNav()}
         <main className="content">
           {this.generateInputFields()}
