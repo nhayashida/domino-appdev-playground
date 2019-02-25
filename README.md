@@ -25,12 +25,12 @@ npm run start
 ```
 npm install
 npm run build
-docker build -f Dockerfile -t proton-dql-playground:latest .
+docker build -f Dockerfile -t domino-appdev-playground:latest .
 ```
 
 3.  Run
 ```
-docker run -it -p 3000:3000 proton-dql-playground:latest
+docker run -it -p 3000:3000 domino-appdev-playground:latest
 ```
 
 #### (Option 3). Run app from Visual Studio Code
@@ -39,7 +39,7 @@ docker run -it -p 3000:3000 proton-dql-playground:latest
 1. Select **Debug** -> **Start Debugging**
 
 ## Play with app
-1. Open http://localhost:3000/proton/dql
+1. Open http://localhost:3000/playground
 1. Input a query for reading documents (e.g. `Form = 'Contact' and LastName = 'Parsons'`)
 1. Click **execute**
 

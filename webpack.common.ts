@@ -1,6 +1,5 @@
 import path from 'path';
 import { Configuration } from 'webpack';
-import HTMLWebpackPlugin from 'html-webpack-plugin';
 
 const useExperimentalFeatures = process.env.CARBON_USE_EXPERIMENTAL_FEATURES === 'true';
 
@@ -13,13 +12,11 @@ const replaceTable = {
 
 const common: Configuration = {
   entry: {
-    dql: path.join(__dirname, 'src/client/dql/index.tsx'),
+    playground: path.join(__dirname, 'src/client/dql/index.tsx'),
   },
   output: {
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].js',
-    path: path.join(__dirname, 'dist/proton/dql'),
-    publicPath: '/proton/dql',
+    filename: '[name].bundle.js',
+    path: path.join(__dirname, 'dist'),
   },
   optimization: {
     splitChunks: {
@@ -83,15 +80,6 @@ const common: Configuration = {
       },
     ],
   },
-  plugins: [
-    new HTMLWebpackPlugin({
-      filename: 'index.html',
-      template: path.join(__dirname, 'src/client/dql/index.html'),
-      meta: {
-        viewport: 'minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no',
-      },
-    }),
-  ],
 };
 
 export default common;

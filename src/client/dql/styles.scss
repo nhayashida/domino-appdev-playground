@@ -7,6 +7,9 @@
     &.closed {
       width: 0;
     }
+    & footer {
+      display: none;
+    }
   }
   
   .content {

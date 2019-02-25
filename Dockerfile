@@ -1,7 +1,7 @@
 FROM node:10.15.1-alpine
 
 ENV SERVICE_USER=app
-ENV APP_DIR=/home/$SERVICE_USER/proton-dql-playground/
+ENV APP_DIR=/home/$SERVICE_USER/domino-appdev-playground
 
 RUN adduser -D -g '' $SERVICE_USER
 ADD --chown=app:app . $APP_DIR

@@ -5,7 +5,7 @@ import App from './components/App';
 import { createStore } from './reducers/reducers';
 import './styles.scss';
 
-ReactDOM.render(
+ReactDOM.hydrate(
   <Provider store={createStore()}>
     <App />
   </Provider>,

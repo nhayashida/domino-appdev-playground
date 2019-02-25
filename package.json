@@ -1,9 +1,9 @@
 {
-  "name": "proton-dql-playground",
+  "name": "domino-appdev-playground",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nhayashida/proton-dql-playground.git"
+    "url": "https://github.com/nhayashida/domino-appdev-playground.git"
   },
   "scripts": {
     "env": "cross-env CARBON_USE_EXPERIMENTAL_FEATURES=true CARBON_USE_BREAKING_CHANGES=true",
@@ -27,7 +27,6 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^6.2.0",
-    "express-session": "^1.15.6",
     "helmet": "^3.15.1",
     "lodash": "^4.17.11",
     "loopback": "^3.25.0",
@@ -49,7 +48,6 @@
     "@fimbul/ymir": "^0.18.0",
     "@types/classnames": "^2.2.7",
     "@types/express": "^4.16.1",
-    "@types/html-webpack-plugin": "^3.2.0",
     "@types/lodash": "^4.14.121",
     "@types/loopback": "^3.2.7",
     "@types/loopback-boot": "^2.23.4",
@@ -65,7 +63,7 @@
     "cpx": "^1.5.0",
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.0",
-    "html-webpack-plugin": "^3.2.0",
+    "express-session": "^1.15.6",
     "node-sass": "^4.11.0",
     "prettier": "1.16.4",
     "redux-devtools-extension": "^2.13.8",
