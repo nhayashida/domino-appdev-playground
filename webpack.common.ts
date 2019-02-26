@@ -1,5 +1,6 @@
 import path from 'path';
 import { Configuration } from 'webpack';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 const useExperimentalFeatures = process.env.CARBON_USE_EXPERIMENTAL_FEATURES === 'true';
 
@@ -31,7 +32,21 @@ const common: Configuration = {
     rules: [
       {
         test: /\.(tsx)?$/,
-        use: [{ loader: 'ts-loader' }],
+        use: [
+          { loader: 'cache-loader' },
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: require('os').cpus().length - 1,
+            },
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              happyPackMode: true,
+            },
+          },
+        ],
       },
       {
         test: /\.js$/,
@@ -80,6 +95,7 @@ const common: Configuration = {
       },
     ],
   },
+  plugins: [new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })],
 };
 
 export default common;

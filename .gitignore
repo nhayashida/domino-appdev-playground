@@ -1,3 +1,4 @@
+.cache-loader
 .env
 dist
 node_modules

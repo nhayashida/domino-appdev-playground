@@ -1,5 +1,122 @@
 @import '~carbon-components/scss/globals/scss/styles';
 
+// Temporary: override with v10 like styles.
+// Will be removed once v10 goes public.
+body {
+  background-color: #ffffff;
+}
+
+.bx--label {
+  font-size: 0.75rem;
+  color: #565656;
+  font-weight: 400;
+  line-height: 1rem;
+}
+
+.bx--text-input {
+  padding: 0 2rem 0 1rem;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #8c8c8c;
+  box-shadow: none;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+}
+
+.bx--text-input::placeholder {
+  color: #8c8c8c !important;
+  font-weight: 200 !important;
+}
+
+.bx--text-input:active, .bx--text-input:focus {
+  outline: 2px solid #0062ff;
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.bx--btn {
+  font-weight: 400;
+  height: 3rem;
+  outline: 2px solid transparent;
+  transition-duration: .1s;
+}
+
+.bx--btn--primary,
+.bx--btn--primary:hover,
+.bx--btn--primary:focus,
+.bx--btn--primary:focus:after {
+  background-color: #0062ff;
+  border-width: 1px;
+}
+
+.bx--btn--primary:focus {
+  border: 1px solid #ffffff;
+  outline: 2px solid #0062ff;
+}
+
+.bx--snippet--multi {
+  background-color: #f3f3f3;
+  border: none;
+  padding: 1rem;
+}
+
+.bx--snippet-button:focus {
+  outline: 1px solid #0062ff;
+}
+
+.bx--snippet__icon,
+.bx--snippet__icon:hover {
+  fill: #171717;
+  height: 1rem;
+  width: 1rem;
+}
+
+.bx--snippet-btn--expand .bx--icon-chevron--down {
+  fill: #171717 !important;
+  margin-left: 0.5rem;
+}
+
+.bx--btn--sm {
+  height: 2rem;
+  padding: 0 1rem;
+}
+
+.bx--btn--ghost,
+.bx--btn--ghost:focus {
+  color: #171717 !important;
+  font-weight: 400;
+  border: none;
+}
+
+.bx--btn--ghost:hover {
+  background-color: transparent;
+}
+
+.bx--btn--ghost:focus {
+  outline: 2px solid #0062ff;
+}
+
+.bx--inline-notification--error {
+  border: none;
+  border-left: 3px solid #e0182d;
+  color: #171717;
+  background-color: #fff0f1;
+}
+
+.bx--inline-notification__icon {
+  height: 14px;
+  width: 14px;
+  margin-top: 0.2rem;
+}
+
+.bx--inline-notification__details {
+  align-items: unset;
+}
+
+.bx--inline-notification__title,
+.bx--inline-notification__subtitle {
+  line-height: 1.5;
+}
+
 .root {
   padding-top: 3rem;
 
@@ -41,11 +158,7 @@
         display: block;
       }
 
-      .bulk-response {
-        .bx--label {
-          margin-bottom: 1rem;
-        }
-    
+      .bulk-response {    
         .bx--snippet--multi {
           max-width: 100%;
         }  
