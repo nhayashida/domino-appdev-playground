@@ -120,6 +120,12 @@ body {
 .root {
   padding-top: 3rem;
 
+  .header {
+    .bx--header__name {
+      font-weight: 400;
+    }
+  }
+
   .side-nav {
     &.closed {
       width: 0;
@@ -175,7 +181,7 @@ body {
     }
 
     .error-notification {
-      margin-top: 4rem;
+      margin-top: 3rem;
       display: none;
 
       &.has-message {

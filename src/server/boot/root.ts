@@ -2,11 +2,16 @@ import { createMessageAdapter } from '@slack/interactive-messages';
 import bparser from 'body-parser';
 import { Request, Response, Router } from 'express';
 import session from 'express-session';
+import uuidv1 from 'uuid/v1';
 import controllers from '../controllers';
 
 const root = async app => {
   app.use(
-    session({ secret: process.env.DOMINO_IAM_CLIENT_ID, saveUninitialized: false, resave: false }),
+    session({
+      secret: process.env.DOMINO_IAM_CLIENT_ID || uuidv1(),
+      saveUninitialized: false,
+      resave: false,
+    }),
   );
 
   const router: Router = app.loopback.Router();

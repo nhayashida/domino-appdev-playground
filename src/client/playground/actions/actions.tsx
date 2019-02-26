@@ -19,19 +19,23 @@ const actions = {
   executeDql: (method: string, options: DqlQuery) => async (dispatch: Dispatch) => {
     dispatch(actions.hideErrorMessage());
 
-    const res = await fetch(`/proton/dql?method=${method}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify(options),
-    });
+    try {
+      const res = await fetch(`/proton/dql?method=${method}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: JSON.stringify(options),
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      dispatch(actions.showErrorMessage(data.error.message));
-    } else {
-      dispatch(actions.setDqlResponse(data));
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(actions.showErrorMessage(data.error.message));
+      } else {
+        dispatch(actions.setDqlResponse(data));
+      }
+    } catch (err) {
+      dispatch(actions.showErrorMessage(err.message));
     }
   },
 };

@@ -1,6 +1,6 @@
 ## Start node server
 #### (Optoin 1). Run app from console
-1. Copy the domino-db archive to the root directory
+1. Copy the domino-db and domino-node-iam-client archives to the root directory
 
 2. Copy [.env.sample](.env.sample) as `.env` and edit the environment variables in the 
 
@@ -17,7 +17,7 @@ npm run start
 
 #### (Optoin 2). Run app using Docker
 
-1. Copy the domino-db archive to the root directory
+1. Copy the domino-db domino-node-iam-client archives to the root directory
 
 2. Copy [.env.sample](.env.sample) as `.env` and edit the environment variables in the 
 
@@ -35,6 +35,7 @@ docker run -it -p 3000:3000 domino-appdev-playground:latest
 
 #### (Option 3). Run app from Visual Studio Code
 1. Open your local repository with Visual Studio Code
+1. Copy the domino-db domino-node-iam-client archives to the root directory
 1. Copy [.env.sample](.env.sample) as `.env` and edit the environment variables in the 
 1. Select **Debug** -> **Start Debugging**
 

@@ -23,10 +23,13 @@ const callback = async (req, res: Response, next: NextFunction) => {
     // Store token into cache
     await Token.set(sid, token);
 
-    res.redirect(`/playground?sid=${sid}`);
+    req.session.sid = sid;
+    res.redirect(`/playground`);
   } catch (err) {
     logger.error(err);
-    res.redirect(`/playground?error=${err.message}`);
+
+    req.session.error = err.message;
+    res.redirect(`/playground`);
   }
 };
 

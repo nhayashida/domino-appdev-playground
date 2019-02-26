@@ -12,6 +12,7 @@ const Html = (props: Props): JSX.Element => {
   return (
     <html>
       <head>
+        <link rel="stylesheet" href="/styles.css" />
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"

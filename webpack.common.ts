@@ -1,5 +1,6 @@
 import path from 'path';
 import { Configuration } from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 const useExperimentalFeatures = process.env.CARBON_USE_EXPERIMENTAL_FEATURES === 'true';
@@ -56,31 +57,31 @@ const common: Configuration = {
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 2,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 2,
+              },
             },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              includePaths: [path.resolve(__dirname, '..', 'node_modules')],
-              data: `
-              $feature-flags: (
-                components-x: ${useExperimentalFeatures},
-                breaking-changes-x: ${useBreakingChanges},
-                grid: ${useExperimentalFeatures},
-                ui-shell: true,
-              );
-            `,
+            {
+              loader: 'sass-loader',
+              options: {
+                includePaths: [path.resolve(__dirname, '..', 'node_modules')],
+                data: `
+                $feature-flags: (
+                  components-x: ${useExperimentalFeatures},
+                  breaking-changes-x: ${useBreakingChanges},
+                  grid: ${useExperimentalFeatures},
+                  ui-shell: true,
+                );
+              `,
+              },
             },
-          },
-        ],
+          ],
+        }),
       },
       {
         test: /(\/|\\)FeatureFlags\.js$/,
@@ -95,7 +96,12 @@ const common: Configuration = {
       },
     ],
   },
-  plugins: [new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })],
+  plugins: [
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
+    new ExtractTextPlugin({
+      filename: 'styles.css',
+    }),
+  ],
 };
 
 export default common;

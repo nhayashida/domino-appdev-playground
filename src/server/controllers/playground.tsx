@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import React from 'react';
 import { renderToNodeStream } from 'react-dom/server';
 import { Provider } from 'react-redux';
@@ -7,11 +7,12 @@ import App from '../../client/playground/components/App';
 import Html from '../../client/playground/components/Html';
 import { createStore } from '../../client/playground/reducers/reducers';
 
-const render = async (req: Request, res: Response) => {
-  const { error, sid } = req.query;
+const render = async (req, res: Response) => {
+  const { error, sid } = req.session;
+  delete req.session.error;
 
   const initState = {
-    errorMessage: error,
+    initErrorMessage: error,
   };
   if (sid) {
     const token = await Token.get(sid);

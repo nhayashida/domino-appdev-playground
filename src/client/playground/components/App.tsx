@@ -22,6 +22,7 @@ import actions from '../actions/actions';
 import { DQL_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
+  initErrorMessage?: string;
   userId?: string;
   errorMessage: string;
   dqlResponse: DqlResponse;
@@ -51,6 +52,22 @@ class App extends Component<Props, State> {
       sideNavOpened: false,
       selectedMethod: 'bulkReadDocuments',
     };
+  }
+
+  componentDidMount() {
+    // Remove elements for server-side rendering
+    ['init-state'].forEach(id => {
+      const elem = document.getElementById(id);
+      if (elem && elem.parentNode) {
+        elem.parentNode.removeChild(elem);
+      }
+    });
+
+    // Show error message if error is thrown on loading page
+    const { initErrorMessage } = this.props;
+    if (initErrorMessage) {
+      this.props.showErrorMessage(initErrorMessage);
+    }
   }
 
   onSideNavToggle = () => {
@@ -84,7 +101,7 @@ class App extends Component<Props, State> {
     );
 
     return (
-      <Header aria-label={selectedMethod}>
+      <Header className="header" aria-label={selectedMethod}>
         <HeaderMenuButton
           aria-label={sideNavOpened ? 'Close' : 'Open'}
           isActive={sideNavOpened}
