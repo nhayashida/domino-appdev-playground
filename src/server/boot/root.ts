@@ -17,9 +17,9 @@ const root = async app => {
   const router: Router = app.loopback.Router();
   router.get('/', (req: Request, res: Response) => res.redirect('/playground'));
   router.get('/playground', controllers.playground.render);
+  router.post('/domino/api', bparser.json(), controllers.domino.api);
   router.get('/iam/auth/url', controllers.iam.authUrl);
   router.get('/iam/callback', controllers.iam.callback);
-  router.post('/proton/dql', bparser.json(), controllers.proton.dql);
   app.use(router);
 
   if (process.env.SLACK_ACCESS_TOKEN && process.env.SLACK_SIGNING_SECRET) {

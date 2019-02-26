@@ -1,13 +1,15 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Token } from '../services/cache';
 import { getAuthContext, getToken } from '../services/iam';
 import logger from '../../common/utils/logger';
 
-const authUrl = async (req, res: Response, next: NextFunction) => {
+const authUrl = async (req: Request, res: Response, next: NextFunction) => {
+  const session = req.session || { secureCtx: undefined };
+
   try {
     const { authorizationUrl, secureCtx } = await getAuthContext();
 
-    req.session.secureCtx = secureCtx;
+    session.secureCtx = secureCtx;
     res.send({ authUrl: authorizationUrl });
   } catch (err) {
     logger.error(err);
@@ -15,7 +17,9 @@ const authUrl = async (req, res: Response, next: NextFunction) => {
   }
 };
 
-const callback = async (req, res: Response, next: NextFunction) => {
+const callback = async (req: Request, res: Response, next: NextFunction) => {
+  const session = req.session || { error: '', sid: '' };
+
   try {
     const token = await getToken(req);
     const { sid } = token;
@@ -23,12 +27,12 @@ const callback = async (req, res: Response, next: NextFunction) => {
     // Store token into cache
     await Token.set(sid, token);
 
-    req.session.sid = sid;
+    session.sid = sid;
     res.redirect(`/playground`);
   } catch (err) {
     logger.error(err);
 
-    req.session.error = err.message;
+    session.error = err.message;
     res.redirect(`/playground`);
   }
 };

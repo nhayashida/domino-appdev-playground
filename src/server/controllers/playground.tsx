@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import React from 'react';
 import { renderToNodeStream } from 'react-dom/server';
 import { Provider } from 'react-redux';
@@ -7,9 +7,10 @@ import App from '../../client/playground/components/App';
 import Html from '../../client/playground/components/Html';
 import { createStore } from '../../client/playground/reducers/reducers';
 
-const render = async (req, res: Response) => {
-  const { error, sid } = req.session;
-  delete req.session.error;
+const render = async (req: Request, res: Response) => {
+  const session = req.session || { error: '', sid: '' };
+  const { error, sid } = session;
+  delete session.error;
 
   const initState = {
     initErrorMessage: error,

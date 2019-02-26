@@ -11,28 +11,33 @@ const actions = {
     type: actionTypes.HIDE_ERROR_MESSAGE,
   }),
 
-  setDqlResponse: (dqlResponse: DqlResponse) => ({
-    dqlResponse,
-    type: actionTypes.SET_DQL_RESPONSE,
+  setDominoResponse: (dominoResponse: DominoResponse) => ({
+    dominoResponse,
+    type: actionTypes.SET_DOMINO_RESPONSE,
   }),
 
-  executeDql: (method: string, options: DqlQuery) => async (dispatch: Dispatch) => {
+  clearResponse: () => async (dispatch: Dispatch) => {
+    dispatch(actions.setDominoResponse({} as DominoResponse));
     dispatch(actions.hideErrorMessage());
+  },
+
+  execute: (method: string, options: object) => async dispatch => {
+    dispatch(actions.clearResponse());
 
     try {
-      const res = await fetch(`/proton/dql?method=${method}`, {
+      const res = await fetch('/domino/api', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },
-        body: JSON.stringify(options),
+        body: JSON.stringify({ method, options }),
       });
 
       const data = await res.json();
       if (!res.ok) {
         dispatch(actions.showErrorMessage(data.error.message));
       } else {
-        dispatch(actions.setDqlResponse(data));
+        dispatch(actions.setDominoResponse(data));
       }
     } catch (err) {
       dispatch(actions.showErrorMessage(err.message));

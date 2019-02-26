@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import actionTypes from '../actions/actionTypes';
 
 const initialState = {
-  dqlResponse: {} as DqlResponse,
+  dominoResponse: {} as DominoResponse,
   errorMessage: '',
 };
 Object.freeze(initialState);
@@ -23,19 +23,19 @@ const errorMessage = (
   return errorMessage;
 };
 
-const dqlResponse = (
-  dqlResponse: DqlResponse = initialState.dqlResponse,
-  action: { type: string; dqlResponse: DqlResponse },
+const dominoResponse = (
+  dominoResponse: DominoResponse = initialState.dominoResponse,
+  action: { type: string; dominoResponse: DominoResponse },
 ): object => {
   switch (action.type) {
-    case actionTypes.SET_DQL_RESPONSE:
-      return action.dqlResponse;
+    case actionTypes.SET_DOMINO_RESPONSE:
+      return action.dominoResponse;
   }
 
-  return dqlResponse;
+  return dominoResponse;
 };
 
 export const createStore = () => {
-  const reducers = combineReducers({ errorMessage, dqlResponse });
+  const reducers = combineReducers({ errorMessage, dominoResponse });
   return reduxCreateStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
 };

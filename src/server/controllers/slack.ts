@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import moment from 'moment';
 import rp from 'request-promise';
 import timingSafeCompare from 'tsscmp';
-import { query } from '../services/domino';
-import { DQL_PROPERTIES } from '../../common/utils/constants';
+import domino from '../services/domino';
+import { DOMINO_API_PROPERTIES } from '../../common/utils/constants';
 import logger from '../../common/utils/logger';
 
 const SLACK_API_ENDPOINT = 'https://slack.com/api';
@@ -44,7 +44,7 @@ const command = async (req: Request, res: Response) => {
     const { command, text, trigger_id } = req.body;
 
     const method = command.slice(1, command.length); // Remove slash
-    const props = DQL_PROPERTIES.find(o => o.method.toLowerCase() === method);
+    const props = DOMINO_API_PROPERTIES.find(o => o.api.toLowerCase() === method);
     if (!props) {
       throw new Error('No properties found');
     }
@@ -97,7 +97,7 @@ const submission = async (
     const { callback_id, submission } = payload;
 
     const method = callback_id;
-    const props = DQL_PROPERTIES.find(o => o.method.toLowerCase() === method);
+    const props = DOMINO_API_PROPERTIES.find(o => o.api.toLowerCase() === method);
     if (!props) {
       throw new Error('No properties found');
     }
@@ -113,10 +113,10 @@ const submission = async (
               : value,
         };
       })
-      .reduce((acc, curr) => Object.assign(acc, curr)) as DqlQuery;
-    const result = await query(method, q);
+      .reduce((acc, curr) => Object.assign(acc, curr)) as DQLQuery;
+    const result = await domino.query(method, q);
 
-    respond({ text: JSON.stringify(result.bulkResponse, null, '  ') });
+    respond({ text: JSON.stringify(result.response, null, '  ') });
   } catch (err) {
     logger.error(err);
     respond({ text: err.message });

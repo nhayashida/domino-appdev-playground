@@ -15,7 +15,7 @@ body {
 
 .bx--text-input {
   padding: 0 2rem 0 1rem;
-  background-color: #f3f3f3;
+  background-color: #ffffff;
   border-bottom: 1px solid #8c8c8c;
   box-shadow: none;
   outline: 2px solid transparent;
@@ -124,6 +124,10 @@ body {
     .bx--header__name {
       font-weight: 400;
     }
+
+    .bx--header__menu-arrow {
+      display: none;
+    }
   }
 
   .side-nav {
@@ -156,15 +160,15 @@ body {
       }
     }
 
-    .dql-response {
+    .domino-response {
       margin-top: 4rem;
       display: none;
 
-      &.has-data {
+      &.has-response {
         display: block;
       }
 
-      .bulk-response {    
+      .response {
         .bx--snippet--multi {
           max-width: 100%;
         }  

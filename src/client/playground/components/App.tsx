@@ -1,4 +1,4 @@
-import { Api20, User20 } from '@carbon/icons-react';
+import { Code16, User20 } from '@carbon/icons-react';
 import { Button, CodeSnippet, TextInput, InlineNotification } from 'carbon-components-react';
 import {
   Header,
@@ -10,6 +10,7 @@ import {
   HeaderNavigation,
   SideNav,
   SideNavItems,
+  SideNavLink,
   SideNavMenu,
   SideNavMenuItem,
 } from 'carbon-components-react/lib/components/UIShell';
@@ -19,25 +20,26 @@ import React, { Component, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
-import { DQL_PROPERTIES } from '../../../common/utils/constants';
+import { DAS, DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
   initErrorMessage?: string;
   userId?: string;
   errorMessage: string;
-  dqlResponse: DqlResponse;
-  executeDql: (method: string, options: DqlQuery) => void;
+  dominoResponse: DominoResponse;
+  execute: (method: string, options: object) => void;
+  clearResponse: () => void;
   showErrorMessage(message: string): void;
 };
 
 type State = {
   sideNavOpened: boolean;
-  selectedMethod: string;
+  selectedApi: string;
 };
 
 const mapStateToProps = (state: Props) => ({
   errorMessage: state.errorMessage,
-  dqlResponse: state.dqlResponse,
+  dominoResponse: state.dominoResponse,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
@@ -50,7 +52,7 @@ class App extends Component<Props, State> {
 
     this.state = {
       sideNavOpened: false,
-      selectedMethod: 'bulkReadDocuments',
+      selectedApi: DOMINO_API_PROPERTIES[0].api,
     };
   }
 
@@ -67,6 +69,16 @@ class App extends Component<Props, State> {
     const { initErrorMessage } = this.props;
     if (initErrorMessage) {
       this.props.showErrorMessage(initErrorMessage);
+    }
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevState.selectedApi !== this.state.selectedApi) {
+      // Clear input and response fields
+      this.getInputFields().forEach(input => {
+        input.value = '';
+      });
+      this.props.clearResponse();
     }
   }
 
@@ -88,7 +100,7 @@ class App extends Component<Props, State> {
 
   generateHeader(): JSX.Element {
     const { userId } = this.props;
-    const { sideNavOpened, selectedMethod } = this.state;
+    const { sideNavOpened, selectedApi } = this.state;
 
     const userAction = !userId ? (
       <HeaderGlobalAction aria-label="Sign in" onClick={this.onSignIn}>
@@ -101,83 +113,95 @@ class App extends Component<Props, State> {
     );
 
     return (
-      <Header className="header" aria-label={selectedMethod}>
+      <Header className="header" aria-label={selectedApi}>
         <HeaderMenuButton
           aria-label={sideNavOpened ? 'Close' : 'Open'}
           isActive={sideNavOpened}
           onClick={this.onSideNavToggle}
         />
-        <HeaderName prefix="">{selectedMethod}</HeaderName>
+        <HeaderName prefix="">{selectedApi}</HeaderName>
         <HeaderGlobalBar>{userAction}</HeaderGlobalBar>
       </Header>
     );
   }
 
-  onMethodSelect = (e: MouseEvent<HTMLAnchorElement>) => {
-    const method = e.currentTarget.textContent || this.state.selectedMethod;
-    this.setState({ sideNavOpened: false, selectedMethod: method });
+  onSideNavMenuItemSelect = (e: MouseEvent<HTMLAnchorElement>) => {
+    const api = e.currentTarget.textContent || this.state.selectedApi;
+    this.setState({ sideNavOpened: false, selectedApi: api });
   };
 
   generateSideNav(): JSX.Element {
-    const { sideNavOpened, selectedMethod } = this.state;
+    const { sideNavOpened, selectedApi } = this.state;
+
+    const dominoDbMenuItems = DOMINO_API_PROPERTIES.filter(
+      props => props.group === 'domino-db',
+    ).map((props, i) => {
+      const ariaCurrent = props.api === selectedApi ? 'page' : '';
+      return (
+        <SideNavMenuItem key={i} aria-current={ariaCurrent} onClick={this.onSideNavMenuItemSelect}>
+          {props.api}
+        </SideNavMenuItem>
+      );
+    });
+    const dominoDbMenu = (
+      <SideNavMenu icon={<Code16 />} defaultExpanded={true} title="domino-db">
+        {dominoDbMenuItems}
+      </SideNavMenu>
+    );
+
+    const dasMenu = (
+      <SideNavLink
+        aria-current={DAS === selectedApi ? 'page' : ''}
+        icon={<Code16 />}
+        onClick={this.onSideNavMenuItemSelect}
+      >
+        {DAS}
+      </SideNavLink>
+    );
 
     const sideNavClasses = classnames('side-nav', {
       closed: !sideNavOpened,
     });
-
-    const menuItems = DQL_PROPERTIES.map((props, i) => {
-      const ariaCurrent = props.method === selectedMethod ? 'page' : '';
-      return (
-        <SideNavMenuItem key={i} aria-current={ariaCurrent} onClick={this.onMethodSelect}>
-          {props.method}
-        </SideNavMenuItem>
-      );
-    });
-
     return (
       <SideNav className={sideNavClasses} aria-label="Side navigation">
         <SideNavItems>
-          <SideNavMenu icon={<Api20 />} defaultExpanded={true} title="domino-db">
-            {menuItems}
-          </SideNavMenu>
+          {dominoDbMenu}
+          {dasMenu}
         </SideNavItems>
       </SideNav>
     );
   }
 
-  generateInputFields(): JSX.Element | null {
-    const dqlProps = DQL_PROPERTIES.find(props => props.method === this.state.selectedMethod);
-    if (!dqlProps) {
+  getInputFields = (): HTMLInputElement[] => {
+    const elem = this.inputFields.current;
+    if (!elem) {
+      return [];
+    }
+    return Array.from(elem.querySelectorAll('input'));
+  };
+
+  generateInputFields(): JSX.Element[] | null {
+    const { selectedApi } = this.state;
+
+    const apiProps = DOMINO_API_PROPERTIES.find(props => props.api === selectedApi);
+    if (!apiProps) {
       return null;
     }
-
-    const inputFields = Object.keys(dqlProps.options).map((key, i) => (
+    return Object.keys(apiProps.options).map((key, i) => (
       <TextInput
         key={i}
         id={key}
         className="input-field"
         labelText={key}
-        placeholder={dqlProps.options[key].placeholder}
-        data-key={key}
+        placeholder={apiProps.options[key].placeholder}
         ref={React.createRef<HTMLInputElement>()}
       />
     ));
-
-    return (
-      <div className="input-field-container" ref={this.inputFields}>
-        {inputFields}
-      </div>
-    );
   }
 
   onExecute = () => {
-    const elem = this.inputFields.current;
-    if (!elem) {
-      return;
-    }
-
     const options = fromPairs(
-      Array.from(elem.querySelectorAll('input')).map(input => {
+      this.getInputFields().map(input => {
         const { id, value } = input;
         try {
           return [id, JSON.parse(value)];
@@ -187,9 +211,8 @@ class App extends Component<Props, State> {
           return [id, value];
         }
       }),
-    ) as DqlQuery;
-
-    this.props.executeDql(this.state.selectedMethod, options);
+    );
+    this.props.execute(this.state.selectedApi, options);
   };
 
   onResponseCopy = () => {
@@ -203,13 +226,13 @@ class App extends Component<Props, State> {
   };
 
   render(): JSX.Element {
-    const { errorMessage, dqlResponse } = this.props;
+    const { errorMessage, dominoResponse } = this.props;
 
-    const { bulkResponse, explain } = dqlResponse;
-    const response = !isEmpty(bulkResponse) ? JSON.stringify(bulkResponse, null, 2) : '';
+    const { response, explain } = dominoResponse;
+    const responseStr = !isEmpty(response) ? JSON.stringify(response, null, 2) : '';
 
-    const responseClasses = classnames('dql-response', {
-      'has-data': response,
+    const responseClasses = classnames('domino-response', {
+      'has-response': responseStr,
     });
     const explainClasses = classnames('explain', '.bx--body');
     const notificationClasses = classnames('error-notification', {
@@ -221,13 +244,15 @@ class App extends Component<Props, State> {
         {this.generateHeader()}
         {this.generateSideNav()}
         <main className="content">
-          {this.generateInputFields()}
+          <div className="input-field-container" ref={this.inputFields}>
+            {this.generateInputFields()}
+          </div>
           <Button onClick={this.onExecute}>Execute</Button>
           <div className={responseClasses}>
-            <div className="bulk-response">
-              <label className="bx--label">bulkResponse</label>
+            <div className="response">
+              <label className="bx--label">response</label>
               <CodeSnippet type="multi" onClick={this.onResponseCopy}>
-                {response}
+                {responseStr}
               </CodeSnippet>
             </div>
             <div className={explainClasses}>

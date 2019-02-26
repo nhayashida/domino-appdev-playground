@@ -72,7 +72,7 @@ enum BulkAPI {
 }
 
 namespace BulkAPI {
-  export const execute = async (db: any, method: string, query: DqlQuery) => {
+  export const execute = async (db: any, method: string, query: DQLQuery) => {
     switch (method.toLowerCase()) {
       case BulkAPI.ReadDocuments:
         return await db.bulkReadDocuments(query);
@@ -95,7 +95,7 @@ namespace BulkAPI {
  * @param query
  * @returns response
  */
-export const query = async (method: string, query: DqlQuery): Promise<DqlResponse> => {
+const query = async (method: string, query: DQLQuery): Promise<DominoResponse> => {
   logger.debug(Object.assign({ method }, query));
 
   try {
@@ -103,10 +103,12 @@ export const query = async (method: string, query: DqlQuery): Promise<DqlRespons
     const db = await server.useDatabase(dbConfig);
 
     const explain = await db.explainQuery(query);
-    const bulkResponse = await BulkAPI.execute(db, method, query);
+    const response = await BulkAPI.execute(db, method, query);
 
-    return { explain, bulkResponse };
+    return { explain, response };
   } catch (err) {
     throw err;
   }
 };
+
+export default { query };

@@ -1,26 +1,29 @@
-export const DQL_PROPERTIES = [
+export const DAS = 'domino access services';
+
+export const DOMINO_API_PROPERTIES = [
   {
-    method: 'bulkReadDocuments',
+    api: 'bulkReadDocuments',
     options: {
       query: {
         placeholder: "LastName = 'Parsons'",
       },
       itemNames: {
         placeholder: '["Id", "City", "State"]',
-        optional: true,
       },
     },
+    group: 'domino-db',
   },
   {
-    method: 'bulkDeleteDocuments',
+    api: 'bulkDeleteDocuments',
     options: {
       query: {
         placeholder: "LastName = 'Parsons'",
       },
     },
+    group: 'domino-db',
   },
   {
-    method: 'bulkReplaceItems',
+    api: 'bulkReplaceItems',
     options: {
       query: {
         placeholder: "LastName = 'Parsons'",
@@ -29,15 +32,25 @@ export const DQL_PROPERTIES = [
         placeholder: '{ "City": "Chelmsford", "State": "MA" }',
       },
     },
+    group: 'domino-db',
   },
   {
-    method: 'bulkDeleteItems',
+    api: 'bulkDeleteItems',
     options: {
       query: {
         placeholder: "LastName = 'Parsons'",
       },
       itemNames: {
         placeholder: '["EMail", "Phone"]',
+      },
+    },
+    group: 'domino-db',
+  },
+  {
+    api: DAS,
+    options: {
+      uri: {
+        placeholder: 'http://localhost/api/freebusy',
       },
     },
   },
