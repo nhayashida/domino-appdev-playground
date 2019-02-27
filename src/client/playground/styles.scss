@@ -13,8 +13,7 @@ body {
   line-height: 1rem;
 }
 
-.bx--text-input {
-  padding: 0 2rem 0 1rem;
+.bx--text-area {
   background-color: #ffffff;
   border-bottom: 1px solid #8c8c8c;
   box-shadow: none;
@@ -22,12 +21,12 @@ body {
   outline-offset: -2px;
 }
 
-.bx--text-input::placeholder {
+.bx--text-area::placeholder {
   color: #8c8c8c !important;
   font-weight: 200 !important;
 }
 
-.bx--text-input:active, .bx--text-input:focus {
+.bx--text-area:active, .bx--text-area:focus {
   outline: 2px solid #0062ff;
   outline-offset: -2px;
   box-shadow: none;
@@ -92,6 +91,7 @@ body {
 }
 
 .bx--btn--ghost:focus {
+  background-color: transparent;
   outline: 2px solid #0062ff;
 }
 

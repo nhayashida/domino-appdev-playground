@@ -1,5 +1,5 @@
 import { Code16, User20 } from '@carbon/icons-react';
-import { Button, CodeSnippet, TextInput, InlineNotification } from 'carbon-components-react';
+import { Button, CodeSnippet, InlineNotification, TextArea } from 'carbon-components-react';
 import {
   Header,
   HeaderGlobalAction,
@@ -10,7 +10,6 @@ import {
   HeaderNavigation,
   SideNav,
   SideNavItems,
-  SideNavLink,
   SideNavMenu,
   SideNavMenuItem,
 } from 'carbon-components-react/lib/components/UIShell';
@@ -20,7 +19,7 @@ import React, { Component, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
-import { DAS, DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
+import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
   initErrorMessage?: string;
@@ -133,31 +132,21 @@ class App extends Component<Props, State> {
   generateSideNav(): JSX.Element {
     const { sideNavOpened, selectedApi } = this.state;
 
-    const dominoDbMenuItems = DOMINO_API_PROPERTIES.filter(
-      props => props.group === 'domino-db',
-    ).map((props, i) => {
+    const dominoDbMenuItems: JSX.Element[] = [];
+    const dasMenuItems: JSX.Element[] = [];
+    DOMINO_API_PROPERTIES.forEach((props, i) => {
       const ariaCurrent = props.api === selectedApi ? 'page' : '';
-      return (
+      const menuItem = (
         <SideNavMenuItem key={i} aria-current={ariaCurrent} onClick={this.onSideNavMenuItemSelect}>
           {props.api}
         </SideNavMenuItem>
       );
+      if (props.group === 'domino-db') {
+        dominoDbMenuItems.push(menuItem);
+      } else if (props.group === 'das') {
+        dasMenuItems.push(menuItem);
+      }
     });
-    const dominoDbMenu = (
-      <SideNavMenu icon={<Code16 />} defaultExpanded={true} title="domino-db">
-        {dominoDbMenuItems}
-      </SideNavMenu>
-    );
-
-    const dasMenu = (
-      <SideNavLink
-        aria-current={DAS === selectedApi ? 'page' : ''}
-        icon={<Code16 />}
-        onClick={this.onSideNavMenuItemSelect}
-      >
-        {DAS}
-      </SideNavLink>
-    );
 
     const sideNavClasses = classnames('side-nav', {
       closed: !sideNavOpened,
@@ -165,19 +154,23 @@ class App extends Component<Props, State> {
     return (
       <SideNav className={sideNavClasses} aria-label="Side navigation">
         <SideNavItems>
-          {dominoDbMenu}
-          {dasMenu}
+          <SideNavMenu icon={<Code16 />} defaultExpanded={true} title="domino-db">
+            {dominoDbMenuItems}
+          </SideNavMenu>
+          <SideNavMenu icon={<Code16 />} defaultExpanded={true} title="domino access services">
+            {dasMenuItems}
+          </SideNavMenu>
         </SideNavItems>
       </SideNav>
     );
   }
 
-  getInputFields = (): HTMLInputElement[] => {
+  getInputFields = (): HTMLTextAreaElement[] => {
     const elem = this.inputFields.current;
     if (!elem) {
       return [];
     }
-    return Array.from(elem.querySelectorAll('input'));
+    return Array.from(elem.querySelectorAll('textarea'));
   };
 
   generateInputFields(): JSX.Element[] | null {
@@ -188,13 +181,14 @@ class App extends Component<Props, State> {
       return null;
     }
     return Object.keys(apiProps.options).map((key, i) => (
-      <TextInput
+      <TextArea
         key={i}
         id={key}
         className="input-field"
         labelText={key}
         placeholder={apiProps.options[key].placeholder}
-        ref={React.createRef<HTMLInputElement>()}
+        rows={1}
+        // ref={React.createRef<HTMLTextAreaElement>()}
       />
     ));
   }

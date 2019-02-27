@@ -1,5 +1,3 @@
-export const DAS = 'domino access services';
-
 export const DOMINO_API_PROPERTIES = [
   {
     api: 'bulkReadDocuments',
@@ -47,11 +45,24 @@ export const DOMINO_API_PROPERTIES = [
     group: 'domino-db',
   },
   {
-    api: DAS,
+    api: 'GET',
     options: {
       uri: {
-        placeholder: 'http://localhost/api/freebusy',
+        placeholder: 'http://localhost/{database}/api/calendar/events',
       },
     },
+    group: 'das',
+  },
+  {
+    api: 'POST',
+    options: {
+      uri: {
+        placeholder: 'http://localhost/{database}/api/calendar/events',
+      },
+      body: {
+        placeholder: '',
+      },
+    },
+    group: 'das',
   },
 ];
