@@ -34,7 +34,7 @@ const api = async (req: Request, res: Response, next: NextFunction) => {
     const { method, options } = req.body;
     const { uri, body } = options;
 
-    if (uri) {
+    if (!isUndefined(uri)) {
       // Get an access token for this session
       const sid: string = req.session && req.session.sid;
       const { access_token: accessToken } = sid ? await Token.get(sid) : { access_token: '' };
@@ -43,7 +43,7 @@ const api = async (req: Request, res: Response, next: NextFunction) => {
       const result = await request({
         uri,
         body,
-        method: isUndefined(body) ? 'GET' : 'POST',
+        method,
         headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
       });
 

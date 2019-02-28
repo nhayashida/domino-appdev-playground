@@ -41,7 +41,7 @@ docker run -it -p 3000:3000 domino-appdev-playground:latest
 
 ## Play with app
 1. Open http://localhost:3000/playground
-1. Input a query for reading documents (e.g. `Form = 'Contact' and LastName = 'Parsons'`)
+1. Input a query for reading documents (e.g. `Form = 'Contact' and LastName = 'Parsons'`) or an endpoint for domino access servies (e.g. http://localhost/{database}/api/calendar/events).
 1. Click **execute**
 
 Then, matched documents will be listed in JSON format

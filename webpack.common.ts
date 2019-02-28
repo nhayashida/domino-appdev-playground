@@ -1,3 +1,4 @@
+import os from 'os';
 import path from 'path';
 import { Configuration } from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -38,7 +39,7 @@ const common: Configuration = {
           {
             loader: 'thread-loader',
             options: {
-              workers: require('os').cpus().length - 1,
+              workers: os.cpus().length - 1,
             },
           },
           {

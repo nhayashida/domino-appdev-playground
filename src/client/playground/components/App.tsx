@@ -15,7 +15,7 @@ import {
 } from 'carbon-components-react/lib/components/UIShell';
 import classnames from 'classnames';
 import { isEmpty, fromPairs } from 'lodash';
-import React, { Component, MouseEvent } from 'react';
+import React, { Component, ChangeEvent, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
@@ -76,6 +76,7 @@ class App extends Component<Props, State> {
       // Clear input and response fields
       this.getInputFields().forEach(input => {
         input.value = '';
+        input.style.height = 'auto';
       });
       this.props.clearResponse();
     }
@@ -165,6 +166,13 @@ class App extends Component<Props, State> {
     );
   }
 
+  onInputFieldChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    // Resize textarea
+    const { currentTarget: elem } = e;
+    elem.style.height = `auto`;
+    elem.style.height = `${elem.scrollHeight + 1}px`;
+  };
+
   getInputFields = (): HTMLTextAreaElement[] => {
     const elem = this.inputFields.current;
     if (!elem) {
@@ -188,7 +196,7 @@ class App extends Component<Props, State> {
         labelText={key}
         placeholder={apiProps.options[key].placeholder}
         rows={1}
-        // ref={React.createRef<HTMLTextAreaElement>()}
+        onChange={this.onInputFieldChange}
       />
     ));
   }
