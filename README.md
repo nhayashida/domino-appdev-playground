@@ -45,7 +45,7 @@ docker run -it -p 3000:3000 domino-appdev-playground:latest
 1. Select **Debug** -> **Start Debugging**
 
 ## Play with app
-1. Open http://localhost:3000/playground
+1. Open `{app_origin}/playground`
 1. Input a query for reading documents (e.g. `LastName = 'Parsons'`), or an endpoint for domino access servies (e.g. `{domino_origin}/{mail_db}/api/calendar/events`).
 1. Click **Execute**
 
