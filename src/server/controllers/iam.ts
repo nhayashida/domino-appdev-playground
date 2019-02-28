@@ -1,13 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { Token } from '../services/cache';
-import { getAuthContext, getToken } from '../services/iam';
+import iam from '../services/iam';
 import logger from '../../common/utils/logger';
 
 const authUrl = async (req: Request, res: Response, next: NextFunction) => {
   const session = req.session || { secureCtx: undefined };
 
   try {
-    const { authorizationUrl, secureCtx } = await getAuthContext();
+    const { authorizationUrl, secureCtx } = await iam.getAuthContext();
 
     session.secureCtx = secureCtx;
     res.send({ authUrl: authorizationUrl });
@@ -21,11 +20,7 @@ const callback = async (req: Request, res: Response, next: NextFunction) => {
   const session = req.session || { error: '', sid: '' };
 
   try {
-    const token = await getToken(req);
-    const { sid } = token;
-
-    // Store token into cache
-    await Token.set(sid, token);
+    const { sid } = await iam.getTokenSet(req);
 
     session.sid = sid;
     res.redirect(`/playground`);

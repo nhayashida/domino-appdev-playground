@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { isUndefined } from 'lodash';
 import rp, { RequestPromise } from 'request-promise';
-import { Token } from '../services/cache';
 import domino from '../services/domino';
+import iam from '../services/iam';
 import logger from '../../common/utils/logger';
 
 /**
@@ -36,8 +36,7 @@ const api = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!isUndefined(uri)) {
       // Get an access token for this session
-      const sid: string = req.session && req.session.sid;
-      const { access_token: accessToken } = sid ? await Token.get(sid) : { access_token: '' };
+      const { access_token: accessToken } = await iam.getTokenSet(req);
 
       // Execute Domino Access Services
       const result = await request({

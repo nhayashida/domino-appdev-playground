@@ -1,5 +1,5 @@
 {
-  "name": "Token",
+  "name": "TokenSet",
   "base": "KeyValueModel",
   "idInjection": true,
   "options": {

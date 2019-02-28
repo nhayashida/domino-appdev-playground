@@ -7,6 +7,7 @@ export const DOMINO_API_PROPERTIES = [
       },
       itemNames: {
         placeholder: '["Id", "City", "State"]',
+        optional: true,
       },
     },
     group: 'domino-db',
