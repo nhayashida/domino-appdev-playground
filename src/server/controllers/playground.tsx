@@ -2,22 +2,22 @@ import { Request, Response } from 'express';
 import React from 'react';
 import { renderToNodeStream } from 'react-dom/server';
 import { Provider } from 'react-redux';
-import { Token } from '../services/cache';
+import iam from '../services/iam';
 import App from '../../client/playground/components/App';
 import Html from '../../client/playground/components/Html';
 import { createStore } from '../../client/playground/reducers/reducers';
 
 const render = async (req: Request, res: Response) => {
   const session = req.session || { error: '', sid: '' };
-  const { error, sid } = session;
+  const { error } = session;
   delete session.error;
 
   const initState = {
     initErrorMessage: error,
   };
-  if (sid) {
-    const token = await Token.get(sid);
-    Object.assign(initState, { userId: token.email });
+  const tokenSet = await iam.getTokenSet(req);
+  if (tokenSet.active) {
+    Object.assign(initState, { userId: tokenSet.email });
   }
 
   renderToNodeStream(

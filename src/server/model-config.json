@@ -13,7 +13,7 @@
       "./mixins"
     ]
   },
-  "Token": {
+  "TokenSet": {
     "public": false,
     "dataSource": "cache"
   }
