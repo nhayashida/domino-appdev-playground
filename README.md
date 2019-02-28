@@ -1,7 +1,7 @@
 ## Register an app
 If you would like to play with IAM and Domino Access Services, register this app using the IAM Admin Service (The callback URL is `{app_origin}/iam/callback`).
 
-Reference: https://doc.cwpcollaboration.com/appdevpack/docs/en/iam_admin_ui_guide.html#register-application
+https://doc.cwpcollaboration.com/appdevpack/docs/en/iam_admin_ui_guide.html#register-application
 
 ## Start node server
 #### (Optoin 1). Run app from console
