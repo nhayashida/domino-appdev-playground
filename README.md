@@ -1,3 +1,8 @@
+## Register an app
+If you would like to play with IAM and Domino Access Services, register this app using the IAM Admin Service (The callback URL is `{app_origin}/iam/callback`).
+
+Reference: https://doc.cwpcollaboration.com/appdevpack/docs/en/iam_admin_ui_guide.html#register-application
+
 ## Start node server
 #### (Optoin 1). Run app from console
 1. Copy the domino-db and domino-node-iam-client archives to the root directory
@@ -41,8 +46,8 @@ docker run -it -p 3000:3000 domino-appdev-playground:latest
 
 ## Play with app
 1. Open http://localhost:3000/playground
-1. Input a query for reading documents (e.g. `Form = 'Contact' and LastName = 'Parsons'`) or an endpoint for domino access servies (e.g. http://localhost/{database}/api/calendar/events).
-1. Click **execute**
+1. Input a query for reading documents (e.g. `LastName = 'Parsons'`), or an endpoint for domino access servies (e.g. `{domino_origin}/{mail_db}/api/calendar/events`).
+1. Click **Execute**
 
 Then, matched documents will be listed in JSON format
 
