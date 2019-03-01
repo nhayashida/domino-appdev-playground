@@ -46,9 +46,6 @@ const api = async (req: Request, res: Response, next: NextFunction) => {
         headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
       });
 
-      if (!result) {
-        throw new Error('No entries found');
-      }
       res.send({ response: result });
     } else {
       // Execute Domino Query Language

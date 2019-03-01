@@ -18,17 +18,16 @@ import { isEmpty, fromPairs } from 'lodash';
 import React, { Component, ChangeEvent, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import actions from '../actions/actions';
+import actions, { Notification } from '../actions/actions';
 import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
-  initErrorMessage?: string;
-  userId?: string;
-  errorMessage: string;
+  errorMessage?: string;
+  email?: string;
+  notification: Notification;
   dominoResponse: DominoResponse;
   execute: (method: string, options: object) => void;
-  clearResponse: () => void;
-  showErrorMessage(message: string): void;
+  showErrorNotification(message: string): void;
 };
 
 type State = {
@@ -37,7 +36,7 @@ type State = {
 };
 
 const mapStateToProps = (state: Props) => ({
-  errorMessage: state.errorMessage,
+  notification: state.notification,
   dominoResponse: state.dominoResponse,
 });
 
@@ -65,20 +64,19 @@ class App extends Component<Props, State> {
     });
 
     // Show error message if error is thrown on loading page
-    const { initErrorMessage } = this.props;
-    if (initErrorMessage) {
-      this.props.showErrorMessage(initErrorMessage);
+    const { errorMessage } = this.props;
+    if (errorMessage) {
+      this.props.showErrorNotification(errorMessage);
     }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevState.selectedApi !== this.state.selectedApi) {
-      // Clear input and response fields
+      // Clear input fields
       this.getInputFields().forEach(input => {
         input.value = '';
         input.style.height = 'auto';
       });
-      this.props.clearResponse();
     }
   }
 
@@ -91,7 +89,7 @@ class App extends Component<Props, State> {
 
     const data = await res.json();
     if (!res.ok) {
-      this.props.showErrorMessage(data.error.message);
+      this.props.showErrorNotification(data.error.message);
     } else {
       // Redirect to authorization page
       location.href = data.authUrl;
@@ -99,16 +97,16 @@ class App extends Component<Props, State> {
   };
 
   generateHeader(): JSX.Element {
-    const { userId } = this.props;
+    const { email } = this.props;
     const { sideNavOpened, selectedApi } = this.state;
 
-    const userAction = !userId ? (
+    const userAction = !email ? (
       <HeaderGlobalAction aria-label="Sign in" onClick={this.onSignIn}>
         <User20 />
       </HeaderGlobalAction>
     ) : (
       <HeaderNavigation aria-label="User">
-        <HeaderMenu aria-label={userId} />
+        <HeaderMenu aria-label={email} />
       </HeaderNavigation>
     );
 
@@ -228,17 +226,17 @@ class App extends Component<Props, State> {
   };
 
   render(): JSX.Element {
-    const { errorMessage, dominoResponse } = this.props;
+    const { notification, dominoResponse } = this.props;
 
     const { response, explain } = dominoResponse;
     const responseStr = !isEmpty(response) ? JSON.stringify(response, null, 2) : '';
 
     const responseClasses = classnames('domino-response', {
-      'has-response': responseStr,
+      'has-response': responseStr && !notification.message,
     });
     const explainClasses = classnames('explain', '.bx--body');
-    const notificationClasses = classnames('error-notification', {
-      'has-message': errorMessage,
+    const notificationClasses = classnames('notification', {
+      'has-message': notification.message,
     });
 
     return (
@@ -264,9 +262,9 @@ class App extends Component<Props, State> {
           <InlineNotification
             className={notificationClasses}
             hideCloseButton={true}
-            kind="error"
-            title="Error"
-            subtitle={errorMessage}
+            kind={notification.type}
+            title={notification.title}
+            subtitle={notification.message}
           />
         </main>
       </div>

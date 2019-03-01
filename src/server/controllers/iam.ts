@@ -16,8 +16,8 @@ const authUrl = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const callback = async (req: Request, res: Response, next: NextFunction) => {
-  const session = req.session || { error: '', sid: '' };
+const callback = async (req: Request, res: Response) => {
+  const session = req.session || { errorMessage: '', sid: '' };
 
   try {
     const { sid } = await iam.getTokenSet(req);
@@ -27,7 +27,7 @@ const callback = async (req: Request, res: Response, next: NextFunction) => {
   } catch (err) {
     logger.error(err);
 
-    session.error = err.message;
+    session.errorMessage = err.message;
     res.redirect(`/playground`);
   }
 };

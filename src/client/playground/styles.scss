@@ -95,10 +95,18 @@ body {
   outline: 2px solid #0062ff;
 }
 
-.bx--inline-notification--error {
+.bx--inline-notification {
   border: none;
+  color: #171717;  
+}
+
+.bx--inline-notification--info {
+  border-left: 3px solid #054ada;
+  background-color: #edf4ff;
+}
+
+.bx--inline-notification--error {
   border-left: 3px solid #e0182d;
-  color: #171717;
   background-color: #fff0f1;
 }
 
@@ -106,6 +114,11 @@ body {
   height: 14px;
   width: 14px;
   margin-top: 0.2rem;
+  margin-right: 1rem;
+}
+
+.bx--inline-notification__text-wrapper {
+  margin-left: 0rem;
 }
 
 .bx--inline-notification__details {
@@ -185,7 +198,7 @@ body {
       }  
     }
 
-    .error-notification {
+    .notification {
       margin-top: 3rem;
       display: none;
 

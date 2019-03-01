@@ -8,16 +8,16 @@ import Html from '../../client/playground/components/Html';
 import { createStore } from '../../client/playground/reducers/reducers';
 
 const render = async (req: Request, res: Response) => {
-  const session = req.session || { error: '', sid: '' };
-  const { error } = session;
-  delete session.error;
+  const session = req.session || { errorMessage: '', sid: '' };
+  const { errorMessage } = session;
+  delete session.errorMessage;
 
   const initState = {
-    initErrorMessage: error,
+    errorMessage,
   };
   const tokenSet = await iam.getTokenSet(req);
   if (tokenSet.active) {
-    Object.assign(initState, { userId: tokenSet.email });
+    Object.assign(initState, { email: tokenSet.email });
   }
 
   renderToNodeStream(

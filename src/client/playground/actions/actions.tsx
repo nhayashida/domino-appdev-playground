@@ -1,14 +1,25 @@
 import { Dispatch } from 'redux';
 import actionTypes from './actionTypes';
 
+export enum NotificationType {
+  Info = 'info',
+  Error = 'error',
+}
+
+export type Notification = {
+  type: NotificationType;
+  title: string;
+  message: string;
+};
+
 const actions = {
-  showErrorMessage: (errorMessage: string) => ({
-    errorMessage,
-    type: actionTypes.SHOW_ERROR_MESSAGE,
+  showNotification: (notification: Notification) => ({
+    notification,
+    type: actionTypes.SHOW_NOTIFICATION,
   }),
 
-  hideErrorMessage: () => ({
-    type: actionTypes.HIDE_ERROR_MESSAGE,
+  hideNotification: () => ({
+    type: actionTypes.HIDE_NOTIFICATION,
   }),
 
   setDominoResponse: (dominoResponse: DominoResponse) => ({
@@ -16,14 +27,15 @@ const actions = {
     type: actionTypes.SET_DOMINO_RESPONSE,
   }),
 
-  clearResponse: () => async (dispatch: Dispatch) => {
-    dispatch(actions.setDominoResponse({} as DominoResponse));
-    dispatch(actions.hideErrorMessage());
+  showInfoNotification: (message: string) => async (dispatch: Dispatch) => {
+    dispatch(actions.showNotification({ message, title: 'Info', type: NotificationType.Info }));
+  },
+
+  showErrorNotification: (message: string) => async (dispatch: Dispatch) => {
+    dispatch(actions.showNotification({ message, title: 'Error', type: NotificationType.Error }));
   },
 
   execute: (method: string, options: object) => async dispatch => {
-    dispatch(actions.clearResponse());
-
     try {
       const res = await fetch('/domino/api', {
         method: 'POST',
@@ -35,12 +47,14 @@ const actions = {
 
       const data = await res.json();
       if (!res.ok) {
-        dispatch(actions.showErrorMessage(data.error.message));
+        dispatch(actions.showErrorNotification(data.error.message));
+      } else if (!data.response) {
+        dispatch(actions.showInfoNotification('No entries found'));
       } else {
         dispatch(actions.setDominoResponse(data));
       }
     } catch (err) {
-      dispatch(actions.showErrorMessage(err.message));
+      dispatch(actions.showErrorNotification(err.message));
     }
   },
 };

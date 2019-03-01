@@ -1,26 +1,28 @@
 import { applyMiddleware, combineReducers, createStore as reduxCreateStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
+import { Notification, NotificationType } from '../actions/actions';
 import actionTypes from '../actions/actionTypes';
 
 const initialState = {
   dominoResponse: {} as DominoResponse,
   errorMessage: '',
+  notification: { type: NotificationType.Info, title: '', message: '' } as Notification,
 };
 Object.freeze(initialState);
 
-const errorMessage = (
-  errorMessage: string = initialState.errorMessage,
-  action: { type: string; errorMessage: string },
-): string => {
+const notification = (
+  notification: Notification = initialState.notification,
+  action: { type: string; notification: Notification },
+): Notification => {
   switch (action.type) {
-    case actionTypes.SHOW_ERROR_MESSAGE:
-      return action.errorMessage;
-    case actionTypes.HIDE_ERROR_MESSAGE:
-      return '';
+    case actionTypes.SHOW_NOTIFICATION:
+      return action.notification;
+    case actionTypes.HIDE_NOTIFICATION:
+      return initialState.notification;
   }
 
-  return errorMessage;
+  return notification;
 };
 
 const dominoResponse = (
@@ -36,6 +38,6 @@ const dominoResponse = (
 };
 
 export const createStore = () => {
-  const reducers = combineReducers({ errorMessage, dominoResponse });
+  const reducers = combineReducers({ notification, dominoResponse });
   return reduxCreateStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
 };
