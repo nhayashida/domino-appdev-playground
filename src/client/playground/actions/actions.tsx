@@ -65,7 +65,7 @@ const actions = {
     dispatch(actions.setDominoResponse({} as DominoResponse));
   },
 
-  authorize: () => async dispatch => {
+  doAuthorization: () => async dispatch => {
     try {
       const res = await fetch('/iam/auth/url');
 

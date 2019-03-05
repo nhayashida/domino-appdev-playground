@@ -18,17 +18,17 @@ type Props = {
   drawerOpened: boolean;
   selectedApi: string;
   onDrawerToggle: () => void;
-  authorize: () => void;
+  doAuthorization: () => void;
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
 
 // tslint:disable-next-line: variable-name
 const AppBar = (props: Props): JSX.Element => {
-  const { email, drawerOpened, selectedApi, onDrawerToggle, authorize } = props;
+  const { email, drawerOpened, selectedApi, onDrawerToggle, doAuthorization } = props;
 
   const userAction = !email ? (
-    <HeaderGlobalAction aria-label="Sign in" onClick={authorize}>
+    <HeaderGlobalAction aria-label="Sign in" onClick={doAuthorization}>
       <User20 />
     </HeaderGlobalAction>
   ) : (

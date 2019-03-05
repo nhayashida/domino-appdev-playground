@@ -16,7 +16,7 @@ type Props = {
 };
 
 // tslint:disable-next-line: variable-name
-const Drawer = (props: Props) => {
+const NavigationDrawer = (props: Props) => {
   const { open, selectedApi, onMenuItemSelect } = props;
 
   const dominoDbMenuItems: JSX.Element[] = [];
@@ -52,4 +52,4 @@ const Drawer = (props: Props) => {
   );
 };
 
-export default Drawer;
+export default NavigationDrawer;
