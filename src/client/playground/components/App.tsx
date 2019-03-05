@@ -1,5 +1,4 @@
 import { User20 } from '@carbon/icons-react';
-import { Button, TextArea } from 'carbon-components-react';
 import {
   Header,
   HeaderGlobalAction,
@@ -9,10 +8,10 @@ import {
   HeaderName,
   HeaderNavigation,
 } from 'carbon-components-react/lib/components/UIShell';
-import { fromPairs } from 'lodash';
-import React, { Component, ChangeEvent, MouseEvent } from 'react';
+import React, { Component, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import InputForm from './InputForm';
 import Response from './Response';
 import SideNavigation from './SideNavigation';
 import actions, { Notification } from '../actions/actions';
@@ -24,7 +23,6 @@ type Props = {
   notification: Notification;
   dominoResponse: DominoResponse;
   showErrorNotification(message: string): void;
-  execute: (method: string, options: object) => void;
   clearResponse: () => void;
 };
 
@@ -41,8 +39,6 @@ const mapStateToProps = (state: Props) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
 
 class App extends Component<Props, State> {
-  private inputFields = React.createRef<HTMLDivElement>();
-
   constructor(props: Props) {
     super(props);
 
@@ -61,7 +57,7 @@ class App extends Component<Props, State> {
       }
     });
 
-    // Show error message if error is thrown on loading page
+    // Show error message if an error is thrown when loading page
     const { errorMessage } = this.props;
     if (errorMessage) {
       this.props.showErrorNotification(errorMessage);
@@ -70,11 +66,6 @@ class App extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevState.selectedApi !== this.state.selectedApi) {
-      // Clear inputs and response
-      this.getInputFields().forEach(input => {
-        input.value = '';
-        input.style.height = 'auto';
-      });
       this.props.clearResponse();
     }
   }
@@ -127,57 +118,6 @@ class App extends Component<Props, State> {
     );
   }
 
-  onInputFieldChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    // Resize textarea
-    const { currentTarget: elem } = e;
-    elem.style.height = `auto`;
-    elem.style.height = `${elem.scrollHeight + 1}px`;
-  };
-
-  getInputFields = (): HTMLTextAreaElement[] => {
-    const elem = this.inputFields.current;
-    if (!elem) {
-      return [];
-    }
-    return Array.from(elem.querySelectorAll('textarea'));
-  };
-
-  generateInputFields(): JSX.Element[] | null {
-    const { selectedApi } = this.state;
-
-    const apiProps = DOMINO_API_PROPERTIES.find(props => props.api === selectedApi);
-    if (!apiProps) {
-      return null;
-    }
-    return Object.keys(apiProps.options).map((key, i) => (
-      <TextArea
-        key={i}
-        id={key}
-        className="input-field"
-        labelText={key}
-        placeholder={apiProps.options[key].placeholder}
-        rows={1}
-        onChange={this.onInputFieldChange}
-      />
-    ));
-  }
-
-  onExecute = () => {
-    const options = fromPairs(
-      this.getInputFields().map(input => {
-        const { id, value } = input;
-        try {
-          return [id, JSON.parse(value)];
-        } catch (err) {
-          // An error is thrown if the type of the value is string.
-          // Then, use the value as is.
-          return [id, value];
-        }
-      }),
-    );
-    this.props.execute(this.state.selectedApi, options);
-  };
-
   render(): JSX.Element {
     const { notification, dominoResponse } = this.props;
     const { sideNavOpened, selectedApi } = this.state;
@@ -191,10 +131,7 @@ class App extends Component<Props, State> {
           onMenuItemSelect={this.onSideNavMenuItemSelect}
         />
         <main className="content">
-          <div className="input-field-container" ref={this.inputFields}>
-            {this.generateInputFields()}
-          </div>
-          <Button onClick={this.onExecute}>Execute</Button>
+          <InputForm selectedApi={selectedApi} />
           <Response dominoResponse={dominoResponse} notification={notification} />
         </main>
       </div>
