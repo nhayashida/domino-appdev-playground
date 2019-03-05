@@ -64,6 +64,22 @@ const actions = {
     dispatch(actions.hideNotification());
     dispatch(actions.setDominoResponse({} as DominoResponse));
   },
+
+  authorize: () => async dispatch => {
+    try {
+      const res = await fetch('/iam/auth/url');
+
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(actions.showErrorNotification(data.error.message));
+      } else {
+        // Redirect to authorization page
+        location.href = data.authUrl;
+      }
+    } catch (err) {
+      dispatch(actions.showErrorNotification(err.message));
+    }
+  },
 };
 
 export default actions;

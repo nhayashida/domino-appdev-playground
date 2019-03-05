@@ -10,14 +10,14 @@ import React, { MouseEvent } from 'react';
 import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
 type Props = {
-  opened: boolean;
+  open: boolean;
   selectedApi: string;
   onMenuItemSelect: (e: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 // tslint:disable-next-line: variable-name
-const SideNavigation = (props: Props) => {
-  const { opened, selectedApi, onMenuItemSelect } = props;
+const Drawer = (props: Props) => {
+  const { open, selectedApi, onMenuItemSelect } = props;
 
   const dominoDbMenuItems: JSX.Element[] = [];
   const dasMenuItems: JSX.Element[] = [];
@@ -36,7 +36,7 @@ const SideNavigation = (props: Props) => {
   });
 
   const sideNavClasses = classnames('side-nav', {
-    closed: !opened,
+    closed: !open,
   });
   return (
     <SideNav className={sideNavClasses} aria-label="Side navigation">
@@ -52,4 +52,4 @@ const SideNavigation = (props: Props) => {
   );
 };
 
-export default SideNavigation;
+export default Drawer;

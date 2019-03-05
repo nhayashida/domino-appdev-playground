@@ -1,13 +1,24 @@
 import { CodeSnippet, InlineNotification } from 'carbon-components-react';
 import classnames from 'classnames';
 import { isEmpty } from 'lodash';
-import React from 'react';
-import { Notification } from '../actions/actions';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
+import actions, { Notification } from '../actions/actions';
 
 type Props = {
+  selectedApi: string;
   dominoResponse: DominoResponse;
   notification: Notification;
+  clearResponse: () => void;
 };
+
+const mapStateToProps = (state: Props) => ({
+  notification: state.notification,
+  dominoResponse: state.dominoResponse,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
 
 const onCopy = () => {
   const selection = window.getSelection();
@@ -21,7 +32,13 @@ const onCopy = () => {
 
 // tslint:disable-next-line: variable-name
 const Response = (props: Props): JSX.Element => {
-  const { dominoResponse, notification } = props;
+  const { selectedApi, dominoResponse, notification, clearResponse } = props;
+
+  useEffect(() => {
+    // Clear response if selected api is changed
+    clearResponse();
+  }, [selectedApi]);
+
   const { response, explain } = dominoResponse;
   const responseStr = !isEmpty(response) ? JSON.stringify(response, null, 2) : '';
 
@@ -56,4 +73,7 @@ const Response = (props: Props): JSX.Element => {
   );
 };
 
-export default Response;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Response);
