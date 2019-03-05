@@ -37,6 +37,8 @@ const actions = {
 
   execute: (method: string, options: object) => async dispatch => {
     try {
+      dispatch(actions.hideNotification());
+
       const res = await fetch('/domino/api', {
         method: 'POST',
         headers: {
@@ -56,6 +58,11 @@ const actions = {
     } catch (err) {
       dispatch(actions.showErrorNotification(err.message));
     }
+  },
+
+  clearResponse: () => async (dispatch: Dispatch) => {
+    dispatch(actions.hideNotification());
+    dispatch(actions.setDominoResponse({} as DominoResponse));
   },
 };
 

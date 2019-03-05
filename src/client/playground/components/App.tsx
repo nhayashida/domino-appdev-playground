@@ -1,5 +1,5 @@
 import { Code16, User20 } from '@carbon/icons-react';
-import { Button, CodeSnippet, InlineNotification, TextArea } from 'carbon-components-react';
+import { Button, TextArea } from 'carbon-components-react';
 import {
   Header,
   HeaderGlobalAction,
@@ -14,10 +14,11 @@ import {
   SideNavMenuItem,
 } from 'carbon-components-react/lib/components/UIShell';
 import classnames from 'classnames';
-import { isEmpty, fromPairs } from 'lodash';
+import { fromPairs } from 'lodash';
 import React, { Component, ChangeEvent, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import Response from './Response';
 import actions, { Notification } from '../actions/actions';
 import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
@@ -26,8 +27,9 @@ type Props = {
   email?: string;
   notification: Notification;
   dominoResponse: DominoResponse;
-  execute: (method: string, options: object) => void;
   showErrorNotification(message: string): void;
+  execute: (method: string, options: object) => void;
+  clearResponse: () => void;
 };
 
 type State = {
@@ -72,11 +74,12 @@ class App extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevState.selectedApi !== this.state.selectedApi) {
-      // Clear input fields
+      // Clear inputs and response
       this.getInputFields().forEach(input => {
         input.value = '';
         input.style.height = 'auto';
       });
+      this.props.clearResponse();
     }
   }
 
@@ -215,29 +218,8 @@ class App extends Component<Props, State> {
     this.props.execute(this.state.selectedApi, options);
   };
 
-  onResponseCopy = () => {
-    const selection = window.getSelection();
-    if (selection) {
-      selection.selectAllChildren(document.querySelectorAll('code')[0]);
-      document.execCommand('copy');
-
-      selection.removeAllRanges();
-    }
-  };
-
   render(): JSX.Element {
     const { notification, dominoResponse } = this.props;
-
-    const { response, explain } = dominoResponse;
-    const responseStr = !isEmpty(response) ? JSON.stringify(response, null, 2) : '';
-
-    const responseClasses = classnames('domino-response', {
-      'has-response': responseStr && !notification.message,
-    });
-    const explainClasses = classnames('explain', '.bx--body');
-    const notificationClasses = classnames('notification', {
-      'has-message': notification.message,
-    });
 
     return (
       <div className="root">
@@ -248,24 +230,7 @@ class App extends Component<Props, State> {
             {this.generateInputFields()}
           </div>
           <Button onClick={this.onExecute}>Execute</Button>
-          <div className={responseClasses}>
-            <div className="response">
-              <label className="bx--label">response</label>
-              <CodeSnippet type="multi" onClick={this.onResponseCopy}>
-                {responseStr}
-              </CodeSnippet>
-            </div>
-            <div className={explainClasses}>
-              <pre>{explain ? explain.trim() : ''}</pre>
-            </div>
-          </div>
-          <InlineNotification
-            className={notificationClasses}
-            hideCloseButton={true}
-            kind={notification.type}
-            title={notification.title}
-            subtitle={notification.message}
-          />
+          <Response dominoResponse={dominoResponse} notification={notification} />
         </main>
       </div>
     );
