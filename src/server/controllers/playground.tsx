@@ -15,9 +15,13 @@ const render = async (req: Request, res: Response) => {
   const initState = {
     errorMessage,
   };
-  const tokenSet = await iam.getTokenSet(req);
-  if (tokenSet.active) {
-    Object.assign(initState, { email: tokenSet.email });
+  try {
+    const tokenSet = await iam.getTokenSet(req);
+    if (tokenSet.active) {
+      Object.assign(initState, { email: tokenSet.email });
+    }
+  } catch (err) {
+    // Do nothing
   }
 
   renderToNodeStream(
