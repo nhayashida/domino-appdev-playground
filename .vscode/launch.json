@@ -15,6 +15,22 @@
       ],
       "preLaunchTask": "build:dev",
       "console": "integratedTerminal",
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "npm test",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "test",
+        "LOGGER_LEVEL": "debug",
+        "LOGGER_PRETTY": "true",
+      }
+    },
   ]
 }

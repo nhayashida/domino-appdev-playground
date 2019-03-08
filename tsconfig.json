@@ -11,7 +11,7 @@
     "target": "esnext",
     "jsx": "react",
     "moduleResolution": "node",
-    "types": ["node"],
+    "types": ["node", "jest"],
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
