@@ -1,69 +1,79 @@
 export const DOMINO_API_PROPERTIES = [
   {
     api: 'bulkReadDocuments',
-    options: {
-      query: {
+    options: [
+      {
+        id: 'query',
         placeholder: "LastName = 'Parsons'",
       },
-      itemNames: {
+      {
+        id: 'itemNames',
         placeholder: '["Id", "City", "State"]',
         optional: true,
       },
-    },
+    ],
     group: 'domino-db',
   },
   {
     api: 'bulkDeleteDocuments',
-    options: {
-      query: {
+    options: [
+      {
+        id: 'query',
         placeholder: "LastName = 'Parsons'",
       },
-    },
+    ],
     group: 'domino-db',
   },
   {
     api: 'bulkReplaceItems',
-    options: {
-      query: {
+    options: [
+      {
+        id: 'query',
         placeholder: "LastName = 'Parsons'",
       },
-      replaceItems: {
+      {
+        id: 'replaceItems',
         placeholder: '{ "City": "Chelmsford", "State": "MA" }',
       },
-    },
+    ],
     group: 'domino-db',
   },
   {
     api: 'bulkDeleteItems',
-    options: {
-      query: {
+    options: [
+      {
+        id: 'query',
         placeholder: "LastName = 'Parsons'",
       },
-      itemNames: {
+      {
+        id: 'itemNames',
         placeholder: '["EMail", "Phone"]',
       },
-    },
+    ],
     group: 'domino-db',
   },
   {
     api: 'GET',
-    options: {
-      uri: {
+    options: [
+      {
+        id: 'uri',
         placeholder: 'http://localhost/{database}/api/calendar/events',
       },
-    },
+    ],
     group: 'das',
   },
   {
     api: 'POST',
-    options: {
-      uri: {
+    options: [
+      {
+        id: 'uri',
         placeholder: 'http://localhost/{database}/api/calendar/events',
       },
-      body: {
+      {
+        id: 'body',
         placeholder: '',
       },
-    },
+    ],
     group: 'das',
   },
 ];

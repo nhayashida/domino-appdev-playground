@@ -59,25 +59,25 @@ const InputForm = (props: Props): JSX.Element => {
 
   const apiProps = DOMINO_API_PROPERTIES.find(props => props.api === selectedApi);
   const inputFields = apiProps
-    ? Object.keys(apiProps.options).map((key, i) => (
+    ? apiProps.options.map((option, i) => (
         <TextArea
           key={i}
-          id={key}
+          id={option.id}
           className="input-field"
-          labelText={key}
-          placeholder={apiProps.options[key].placeholder}
+          labelText={option.id}
+          placeholder={option.placeholder}
           rows={1}
           onChange={onInputFieldChange}
         />
       ))
     : undefined;
   return (
-    <div>
+    <React.Fragment>
       <div className="input-fields" ref={inputFieldsRef}>
         {inputFields}
       </div>
       <Button onClick={onExecute}>Execute</Button>
-    </div>
+    </React.Fragment>
   );
 };
 

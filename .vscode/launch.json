@@ -8,10 +8,10 @@
       "program": "${workspaceFolder}/src/server/server.ts",
       "runtimeArgs": [
         "-r", "dotenv/config",
-        "-r", "ts-node/register"
+        "-r", "ts-node/register",
       ],
       "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
+        "${workspaceFolder}/dist/**/*.js",
       ],
       "preLaunchTask": "build:dev",
       "console": "integratedTerminal",

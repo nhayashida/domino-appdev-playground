@@ -50,7 +50,7 @@ const Response = (props: Props): JSX.Element => {
   });
 
   return (
-    <div>
+    <React.Fragment>
       <div className={dominoResponseClasses}>
         <div className="response">
           <label className="bx--label">response</label>
@@ -69,7 +69,7 @@ const Response = (props: Props): JSX.Element => {
         title={notification.title}
         subtitle={notification.message}
       />
-    </div>
+    </React.Fragment>
   );
 };
 
