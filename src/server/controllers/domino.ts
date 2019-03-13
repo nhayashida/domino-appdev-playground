@@ -17,8 +17,7 @@ const request = (options: {
   headers?: { Authorization: string };
   body?: object;
 }): RequestPromise => {
-  const { uri, method, headers, body } = options;
-  return rp({ uri, method, headers, body, json: true, rejectUnauthorized: false });
+  return rp({ ...options, json: true, rejectUnauthorized: false });
 };
 
 /**
