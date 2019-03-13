@@ -6,7 +6,6 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
   dominoResponse: {} as DominoResponse,
-  errorMessage: '',
   notification: { type: NotificationType.Info, title: '', message: '' } as Notification,
 };
 Object.freeze(initialState);

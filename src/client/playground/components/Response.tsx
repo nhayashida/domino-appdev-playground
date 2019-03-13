@@ -1,7 +1,7 @@
 import { CodeSnippet, InlineNotification } from 'carbon-components-react';
 import classnames from 'classnames';
 import { isEmpty } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions, { Notification } from '../actions/actions';
@@ -41,16 +41,20 @@ const Response = (props: Props): JSX.Element => {
 
   const { response, explain } = dominoResponse;
   const responseStr = !isEmpty(response) ? JSON.stringify(response, null, 2) : '';
+  const explainStr = explain ? explain.trim() : '';
 
   const dominoResponseClasses = classnames('domino-response', {
     'has-response': responseStr && !notification.message,
+  });
+  const explainClasses = classnames('.bx--body', 'explain', {
+    'has-explain': explainStr,
   });
   const notificationClasses = classnames('notification', {
     'has-message': notification.message,
   });
 
   return (
-    <React.Fragment>
+    <Fragment>
       <div className={dominoResponseClasses}>
         <div className="response">
           <label className="bx--label">response</label>
@@ -58,8 +62,8 @@ const Response = (props: Props): JSX.Element => {
             {responseStr}
           </CodeSnippet>
         </div>
-        <div className={classnames('explain', '.bx--body')}>
-          <pre>{explain ? explain.trim() : ''}</pre>
+        <div className={explainClasses}>
+          <pre>{explainStr}</pre>
         </div>
       </div>
       <InlineNotification
@@ -69,7 +73,7 @@ const Response = (props: Props): JSX.Element => {
         title={notification.title}
         subtitle={notification.message}
       />
-    </React.Fragment>
+    </Fragment>
   );
 };
 

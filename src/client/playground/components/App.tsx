@@ -48,7 +48,7 @@ const App = (props: Props): JSX.Element => {
   };
 
   return (
-    <div className="root">
+    <div className="playground-component">
       <AppBar
         email={email}
         drawerOpened={drawerOpened}

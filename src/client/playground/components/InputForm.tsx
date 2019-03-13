@@ -1,6 +1,6 @@
 import { Button, TextArea } from 'carbon-components-react';
 import { fromPairs } from 'lodash';
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import actions from '../actions/actions';
@@ -72,12 +72,12 @@ const InputForm = (props: Props): JSX.Element => {
       ))
     : undefined;
   return (
-    <React.Fragment>
+    <Fragment>
       <div className="input-fields" ref={inputFieldsRef}>
         {inputFields}
       </div>
       <Button onClick={onExecute}>Execute</Button>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

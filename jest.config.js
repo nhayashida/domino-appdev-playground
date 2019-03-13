@@ -8,8 +8,9 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/common/models/**/*.ts',
+    '!src/common/types/**/*.ts',
+    '!src/common/utils/**/*.ts',
     '!src/server/*.ts',
-    '!src/server/utils/constants.ts',
   ],
   setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
 };
