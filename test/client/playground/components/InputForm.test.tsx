@@ -40,7 +40,7 @@ describe('InputForm', () => {
   });
 
   it('Adjust the height of a textarea when the value is changed', () => {
-    const { api, options } = DOMINO_API_PROPERTIES[0];
+    const { api } = DOMINO_API_PROPERTIES[0];
 
     const store = configureStore([thunk])();
     const wrapper = mount(
@@ -51,7 +51,7 @@ describe('InputForm', () => {
 
     const textareas = wrapper.find('.bx--text-area');
     const instance = textareas.at(0).instance();
-    expect(instance['style']['height']).toEqual('');
+    expect(instance['style']['height']).toEqual('auto');
     textareas.at(0).simulate('change');
     expect(instance['style']['height']).toEqual('1px');
   });

@@ -24,6 +24,8 @@
       "args": [
         "--runInBand",
         "--no-cache",
+        // "test/client/playground/components/Html.test.tsx"
+        "test/server/controllers/domino.test.ts"
       ],
       "console": "integratedTerminal",
       "env": {
