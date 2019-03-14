@@ -5,17 +5,6 @@ import service from '../../../src/server/services/iam';
 jest.mock('../../../src/server/services/iam');
 
 describe('iam', () => {
-  const PROCESS_ENV = { ...process.env };
-
-  beforeAll(() => {
-    process.env.DOMINO_IAM_CLIENT_SCOPE =
-      'openid offline_access das.freebusy das.calendar.read.with.shared das.calendar.write.with.shared';
-  });
-
-  afterAll(() => {
-    process.env = PROCESS_ENV;
-  });
-
   it('Return url for authorization page', async done => {
     const context = {
       authorizationUrl: 'TEST_AUTH_URL',
