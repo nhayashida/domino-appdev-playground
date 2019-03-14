@@ -1,1 +1,6 @@
-{}
+{
+  "cache": {
+    "name": "cache",
+    "connector": "kv-memory"
+  }
+}
