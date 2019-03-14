@@ -26,14 +26,16 @@ describe('iam', () => {
     active: true,
   };
 
-  IAMClient.createInstance = jest.fn().mockReturnValue({
-    createAuthorizationCtx: () => context,
-    getToken: () => token,
-    introspectAccessToken: () => details,
-    refreshToken: refreshToken => {
-      expect(refreshToken).toEqual(token.refresh_token);
-      return newToken;
-    },
+  beforeEach(() => {
+    IAMClient.createInstance = jest.fn().mockReturnValue({
+      createAuthorizationCtx: () => context,
+      getToken: () => token,
+      introspectAccessToken: () => details,
+      refreshToken: refreshToken => {
+        expect(refreshToken).toEqual(token.refresh_token);
+        return newToken;
+      },
+    });
   });
 
   it('getAuthContext', async () => {
