@@ -7,6 +7,12 @@ import App from '../../client/playground/components/App';
 import Html from '../../client/playground/components/Html';
 import { createStore } from '../../client/playground/reducers/reducers';
 
+/**
+ * Render playground app
+ *
+ * @param req
+ * @param res
+ */
 const render = async (req: Request, res: Response) => {
   const session = req.session || { errorMessage: '', sid: '' };
   const { errorMessage } = session;

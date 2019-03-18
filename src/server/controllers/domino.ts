@@ -21,7 +21,6 @@ const request = (options: {
 };
 
 /**
-/**
  * Execute a Domino API
  *
  * @param req
