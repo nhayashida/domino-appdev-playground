@@ -1,21 +1,22 @@
-import { Button, TextArea } from 'carbon-components-react';
-import { fromPairs } from 'lodash';
+import Button from 'carbon-components-react/lib/components/Button';
+import TextArea from 'carbon-components-react/lib/components/TextArea';
+import fromPairs from 'lodash/fromPairs';
 import React, { ChangeEvent, Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import actions from '../actions/actions';
+import { executeApi } from '../reducers/thunkActions';
 import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
-type Props = {
+interface Props {
   selectedApi: string;
-  execute: (method: string, options: object) => void;
-};
+  executeApi: typeof executeApi;
+}
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({ executeApi }, dispatch);
 
 // tslint:disable-next-line: variable-name
 const InputForm = (props: Props): JSX.Element => {
-  const { selectedApi, execute } = props;
+  const { selectedApi } = props;
   const inputFieldsRef = React.createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const InputForm = (props: Props): JSX.Element => {
         }
       }),
     );
-    execute(selectedApi, options);
+    props.executeApi(selectedApi, options);
   };
 
   const apiProps = DOMINO_API_PROPERTIES.find(props => props.api === selectedApi);

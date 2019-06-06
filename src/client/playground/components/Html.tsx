@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 
-type Props = {
+interface Props {
   children: ReactNode;
   initState?: string;
-};
+}
 
 // tslint:disable-next-line:variable-name
 const Html = (props: Props): JSX.Element => {

@@ -1,34 +1,33 @@
-import { User20 } from '@carbon/icons-react';
-import {
-  Header,
-  HeaderGlobalAction,
-  HeaderGlobalBar,
-  HeaderMenu,
-  HeaderMenuButton,
-  HeaderName,
-  HeaderNavigation,
-} from 'carbon-components-react/lib/components/UIShell';
+import User20 from '@carbon/icons-react/lib/user/20';
+import Header from 'carbon-components-react/lib/components/UIShell/Header';
+import HeaderGlobalAction from 'carbon-components-react/lib/components/UIShell/HeaderGlobalAction';
+import HeaderGlobalBar from 'carbon-components-react/lib/components/UIShell/HeaderGlobalBar';
+import HeaderMenu from 'carbon-components-react/lib/components/UIShell/HeaderMenu';
+import HeaderMenuButton from 'carbon-components-react/lib/components/UIShell/HeaderMenuButton';
+import HeaderName from 'carbon-components-react/lib/components/UIShell/HeaderName';
+import HeaderNavigation from 'carbon-components-react/lib/components/UIShell/HeaderNavigation';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import actions from '../actions/actions';
+import { doAuthorization } from '../reducers/thunkActions';
 
-type Props = {
+interface Props {
   email?: string;
   drawerOpened: boolean;
   selectedApi: string;
   onDrawerToggle: () => void;
-  doAuthorization: () => void;
-};
+  doAuthorization: typeof doAuthorization;
+}
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators({ doAuthorization }, dispatch);
 
 // tslint:disable-next-line: variable-name
 const AppBar = (props: Props): JSX.Element => {
-  const { email, drawerOpened, selectedApi, onDrawerToggle, doAuthorization } = props;
+  const { email, drawerOpened, selectedApi } = props;
 
   const userAction = !email ? (
-    <HeaderGlobalAction aria-label="Sign in" onClick={doAuthorization}>
+    <HeaderGlobalAction aria-label="Sign in" onClick={props.doAuthorization}>
       <User20 />
     </HeaderGlobalAction>
   ) : (
@@ -41,7 +40,7 @@ const AppBar = (props: Props): JSX.Element => {
       <HeaderMenuButton
         aria-label={drawerOpened ? 'Close' : 'Open'}
         isActive={drawerOpened}
-        onClick={onDrawerToggle}
+        onClick={props.onDrawerToggle}
       />
       <HeaderName prefix="">{selectedApi}</HeaderName>
       <HeaderGlobalBar>{userAction}</HeaderGlobalBar>

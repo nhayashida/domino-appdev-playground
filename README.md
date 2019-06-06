@@ -28,8 +28,6 @@ npm run start
 
 3.  Build a Docker image
 ```
-npm install
-npm run build
 docker build -f Dockerfile -t domino-appdev-playground:latest .
 ```
 

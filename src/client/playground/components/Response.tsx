@@ -1,43 +1,46 @@
-import { CodeSnippet, InlineNotification } from 'carbon-components-react';
+import CodeSnippet from 'carbon-components-react/lib/components/CodeSnippet';
+import { InlineNotification } from 'carbon-components-react/lib/components/Notification';
 import classnames from 'classnames';
-import { isEmpty } from 'lodash';
-import React, { Fragment, useEffect } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import actions, { Notification } from '../actions/actions';
+import { clearResponse } from '../reducers/thunkActions';
+import { State } from '../reducers/store';
+import { Notification } from '../reducers/types';
 
-type Props = {
+interface Props {
   selectedApi: string;
   dominoResponse: DominoResponse;
   notification: Notification;
-  clearResponse: () => void;
-};
+  clearResponse: typeof clearResponse;
+}
 
-const mapStateToProps = (state: Props) => ({
+const mapStateToProps = (state: State) => ({
   notification: state.notification,
   dominoResponse: state.dominoResponse,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
-
-const onCopy = () => {
-  const selection = window.getSelection();
-  if (selection) {
-    selection.selectAllChildren(document.querySelectorAll('code')[0]);
-    document.execCommand('copy');
-
-    selection.removeAllRanges();
-  }
-};
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({ clearResponse }, dispatch);
 
 // tslint:disable-next-line: variable-name
 const Response = (props: Props): JSX.Element => {
-  const { selectedApi, dominoResponse, notification, clearResponse } = props;
+  const { selectedApi, dominoResponse, notification } = props;
 
   useEffect(() => {
     // Clear response if selected api is changed
-    clearResponse();
+    props.clearResponse();
   }, [selectedApi]);
+
+  const onCopy = () => {
+    const selection = window.getSelection();
+    if (selection) {
+      selection.selectAllChildren(document.querySelectorAll('code')[0]);
+      document.execCommand('copy');
+
+      selection.removeAllRanges();
+    }
+  };
 
   const { response, explain } = dominoResponse;
   const responseStr = !isEmpty(response) ? JSON.stringify(response, null, 2) : '';
@@ -54,7 +57,7 @@ const Response = (props: Props): JSX.Element => {
   });
 
   return (
-    <Fragment>
+    <React.Fragment>
       <div className={dominoResponseClasses}>
         <div className="response">
           <label className="bx--label">response</label>
@@ -73,7 +76,7 @@ const Response = (props: Props): JSX.Element => {
         title={notification.title}
         subtitle={notification.message}
       />
-    </Fragment>
+    </React.Fragment>
   );
 };
 

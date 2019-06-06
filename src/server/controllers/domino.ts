@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { isUndefined } from 'lodash';
+import isUndefined from 'lodash/isUndefined';
 import rp, { RequestPromise } from 'request-promise';
 import domino from '../services/domino';
 import iam from '../services/iam';

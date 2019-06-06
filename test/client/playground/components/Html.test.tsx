@@ -4,7 +4,7 @@ import React from 'react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { Notification, NotificationType } from '../../../../src/client/playground/actions/actions';
+import { Notification, NotificationType } from '../../../../src/client/playground/reducers/types';
 import App from '../../../../src/client/playground/components/App';
 import Html from '../../../../src/client/playground/components/Html';
 
@@ -15,6 +15,7 @@ describe('Html', () => {
       notification: { type: NotificationType.Info, title: '', message: '' } as Notification,
     });
     const wrapper = shallow(
+      // tslint:disable-next-line: jsx-wrap-multiline
       <Html>
         <Provider store={store}>
           <App />

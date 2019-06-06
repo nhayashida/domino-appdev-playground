@@ -1,24 +1,25 @@
 import React, { MouseEvent, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
+import { showErrorNotification } from '../reducers/thunkActions';
 import AppBar from './AppBar';
 import NavigationDrawer from './NavigationDrawer';
 import InputForm from './InputForm';
 import Response from './Response';
-import actions from '../actions/actions';
 import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
-type Props = {
+interface Props {
   email?: string;
   errorMessage?: string;
-  showErrorNotification(message: string): void;
-};
+  showErrorNotification: typeof showErrorNotification;
+}
 
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators(actions, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators({ showErrorNotification }, dispatch);
 
 // tslint:disable-next-line: variable-name
 const App = (props: Props): JSX.Element => {
-  const { email, errorMessage, showErrorNotification } = props;
+  const { email, errorMessage } = props;
 
   const [drawerOpened, setDrawerOpened] = useState(false);
   const [selectedApi, setSelectedApi] = useState(DOMINO_API_PROPERTIES[0].api);
@@ -34,7 +35,7 @@ const App = (props: Props): JSX.Element => {
 
     // Show error message if an error is thrown when loading page
     if (errorMessage) {
-      showErrorNotification(errorMessage);
+      props.showErrorNotification(errorMessage);
     }
   }, []);
 

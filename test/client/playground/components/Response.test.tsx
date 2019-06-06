@@ -1,10 +1,12 @@
+// tslint:disable: jsx-wrap-multiline
+
 import 'jsdom-global/register';
 import { mount } from 'enzyme';
 import React from 'react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { Notification, NotificationType } from '../../../../src/client/playground/actions/actions';
+import { Notification, NotificationType } from '../../../../src/client/playground/reducers/types';
 import Response from '../../../../src/client/playground/components/Response';
 import { DOMINO_API_PROPERTIES } from '../../../../src/common/utils/constants';
 

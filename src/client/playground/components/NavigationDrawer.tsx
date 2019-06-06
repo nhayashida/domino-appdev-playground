@@ -1,19 +1,17 @@
-import { Code16 } from '@carbon/icons-react';
-import {
-  SideNav,
-  SideNavItems,
-  SideNavMenu,
-  SideNavMenuItem,
-} from 'carbon-components-react/lib/components/UIShell';
+import Code16 from '@carbon/icons-react/lib/code/16';
+import SideNav from 'carbon-components-react/lib/components/UIShell/SideNav';
+import SideNavItems from 'carbon-components-react/lib/components/UIShell/SideNavItems';
+import SideNavMenu from 'carbon-components-react/lib/components/UIShell/SideNavMenu';
+import SideNavMenuItem from 'carbon-components-react/lib/components/UIShell/SideNavMenuItem';
 import classnames from 'classnames';
 import React, { MouseEvent } from 'react';
 import { DOMINO_API_PROPERTIES } from '../../../common/utils/constants';
 
-type Props = {
+interface Props {
   open: boolean;
   selectedApi: string;
   onMenuItemSelect: (e: MouseEvent<HTMLAnchorElement>) => void;
-};
+}
 
 // tslint:disable-next-line: variable-name
 const NavigationDrawer = (props: Props) => {

@@ -1,6 +1,7 @@
 import { useServer } from '@domino/domino-db';
 import fs from 'fs';
-import { fromPairs, isEmpty } from 'lodash';
+import fromPairs from 'lodash/fromPairs';
+import isEmpty from 'lodash/isEmpty';
 import path from 'path';
 import logger from '../../common/utils/logger';
 

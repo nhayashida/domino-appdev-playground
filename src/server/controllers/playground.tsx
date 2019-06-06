@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import iam from '../services/iam';
 import App from '../../client/playground/components/App';
 import Html from '../../client/playground/components/Html';
-import { createStore } from '../../client/playground/reducers/reducers';
+import store from '../../client/playground/reducers/store';
 
 /**
  * Render playground app
@@ -31,8 +31,9 @@ const render = async (req: Request, res: Response) => {
   }
 
   renderToNodeStream(
+    // tslint:disable-next-line: jsx-wrap-multiline
     <Html initState={JSON.stringify(initState)}>
-      <Provider store={createStore()}>
+      <Provider store={store}>
         <App />
       </Provider>
     </Html>,

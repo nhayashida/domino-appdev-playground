@@ -1,11 +1,14 @@
+import { AnyAction } from 'redux';
 import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
-import actionTypes from '../../../../src/client/playground/actions/actionTypes';
-import actions from '../../../../src/client/playground/actions/actions';
-import { AnyAction } from 'redux';
 import mockFetch from 'jest-fetch-mock';
+import {
+  doAuthorization,
+  executeApi,
+} from '../../../../src/client/playground/reducers/thunkActions';
+import { ActionType } from '../../../../src/client/playground/reducers/types';
 
-describe('actions', () => {
+describe('thunkActions', () => {
   const store = configureStore([thunk])();
 
   const fetch = global.fetch;
@@ -35,30 +38,30 @@ describe('actions', () => {
       explain: 'TEST_EXPLAIN',
     };
     global.fetch.mockResponse(JSON.stringify(dominoResponse));
-    await store.dispatch((actions.execute('bulkReadDocuments', {}) as unknown) as AnyAction);
+    await store.dispatch((executeApi('bulkReadDocuments', {}) as unknown) as AnyAction);
     let dispatched = store.getActions();
     expect(dispatched).toEqual([
-      { type: actionTypes.HIDE_NOTIFICATION },
+      { type: ActionType.HIDE_NOTIFICATION },
       {
         dominoResponse,
-        type: actionTypes.SET_DOMINO_RESPONSE,
+        type: ActionType.SET_DOMINO_RESPONSE,
       },
     ]);
     store.clearActions();
 
     // Show info if no entries found
     global.fetch.mockResponse(JSON.stringify({}));
-    await store.dispatch((actions.execute('bulkReadDocuments', {}) as unknown) as AnyAction);
+    await store.dispatch((executeApi('bulkReadDocuments', {}) as unknown) as AnyAction);
     dispatched = store.getActions();
     expect(dispatched).toEqual([
-      { type: actionTypes.HIDE_NOTIFICATION },
+      { type: ActionType.HIDE_NOTIFICATION },
       {
         notification: {
           message: 'No entries found',
           title: 'Info',
           type: 'info',
         },
-        type: actionTypes.SHOW_NOTIFICATION,
+        type: ActionType.SHOW_NOTIFICATION,
       },
     ]);
     store.clearActions();
@@ -67,33 +70,33 @@ describe('actions', () => {
     const errorMessage = 'TEST_ERROR_MESSAGE';
 
     global.fetch.mockRejectedValue({ message: errorMessage });
-    await store.dispatch((actions.execute('bulkReadDocuments', {}) as unknown) as AnyAction);
+    await store.dispatch((executeApi('bulkReadDocuments', {}) as unknown) as AnyAction);
     dispatched = store.getActions();
     expect(dispatched).toEqual([
-      { type: actionTypes.HIDE_NOTIFICATION },
+      { type: ActionType.HIDE_NOTIFICATION },
       {
         notification: {
           message: errorMessage,
           title: 'Error',
           type: 'error',
         },
-        type: actionTypes.SHOW_NOTIFICATION,
+        type: ActionType.SHOW_NOTIFICATION,
       },
     ]);
     store.clearActions();
 
     global.fetch.mockResolvedValue({ json: () => ({ error: { message: errorMessage } }) });
-    await store.dispatch((actions.execute('bulkReadDocuments', {}) as unknown) as AnyAction);
+    await store.dispatch((executeApi('bulkReadDocuments', {}) as unknown) as AnyAction);
     dispatched = store.getActions();
     expect(dispatched).toEqual([
-      { type: actionTypes.HIDE_NOTIFICATION },
+      { type: ActionType.HIDE_NOTIFICATION },
       {
         notification: {
           message: errorMessage,
           title: 'Error',
           type: 'error',
         },
-        type: actionTypes.SHOW_NOTIFICATION,
+        type: ActionType.SHOW_NOTIFICATION,
       },
     ]);
     store.clearActions();
@@ -103,14 +106,14 @@ describe('actions', () => {
     // Redirect to authorization page
     const authUrl = 'TEST_AUTH_URL';
     global.fetch.mockResponse(JSON.stringify({ authUrl }));
-    await store.dispatch((actions.doAuthorization() as unknown) as AnyAction);
+    await store.dispatch((doAuthorization() as unknown) as AnyAction);
     expect(global['location']).toEqual({ href: authUrl });
 
     // Show error if fail to get a url for authorization page
     const errorMessage = 'TEST_ERROR_MESSAGE';
 
     global.fetch.mockRejectedValue({ message: errorMessage });
-    await store.dispatch((actions.doAuthorization() as unknown) as AnyAction);
+    await store.dispatch((doAuthorization() as unknown) as AnyAction);
     let dispatched = store.getActions();
     expect(dispatched).toEqual([
       {
@@ -119,13 +122,13 @@ describe('actions', () => {
           title: 'Error',
           type: 'error',
         },
-        type: actionTypes.SHOW_NOTIFICATION,
+        type: ActionType.SHOW_NOTIFICATION,
       },
     ]);
     store.clearActions();
 
     global.fetch.mockResolvedValue({ json: () => ({ error: { message: errorMessage } }) });
-    await store.dispatch((actions.doAuthorization() as unknown) as AnyAction);
+    await store.dispatch((doAuthorization() as unknown) as AnyAction);
     dispatched = store.getActions();
     expect(dispatched).toEqual([
       {
@@ -134,7 +137,7 @@ describe('actions', () => {
           title: 'Error',
           type: 'error',
         },
-        type: actionTypes.SHOW_NOTIFICATION,
+        type: ActionType.SHOW_NOTIFICATION,
       },
     ]);
     store.clearActions();
