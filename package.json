@@ -19,7 +19,7 @@
     "@carbon/icons-react": "10.3.0",
     "@domino/domino-db": "file:domino-domino-db-1.1.0.tgz",
     "@domino/node-iam-client": "file:domino-node-iam-client-1.0.22.tgz",
-    "ajv": "^6.10.0",
+    "ajv": "^6.12.3",
     "carbon-components": "^9.91.3",
     "carbon-components-react": "^6.115.3",
     "carbon-icons": "^7.0.7",
